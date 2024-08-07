@@ -1,0 +1,35 @@
+{
+  "name": "gym_membership_portal",
+  "version": "1.0.0",
+  "description": "A gym membership portal where users can renew their plan or purchase gym equipments and services.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "format": "prettier --write .",
+    "start": "nodemon server.js",
+    "prestart": "npm run migrate",
+    "migrate": "knex migrate:latest --knexfile=config/knexfile.js",
+    "migrate:rollback": "knex migrate:rollback --knexfile=config/knexfile.js",
+    "migrate:make": "knex migrate:make --knexfile=config/knexfile.js",
+    "seed": "knex seed:run --knexfile=config/knexfile.js",
+    "seed:make": "knex seed:make --knexfile=config/knexfile.js",
+    "seed:undo": "knex seed:undo --knexfile=config/knexfile.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "gym-membership-portal-backend-nodejs-express"
+  },
+  "author": "Joanna Chua",
+  "license": "ISC",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "body-parser": "^1.20.2",
+    "express": "^4.19.2",
+    "jsonwebtoken": "^9.0.2",
+    "knex": "^3.1.0",
+    "mysql2": "^3.11.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.4"
+  }
+}
