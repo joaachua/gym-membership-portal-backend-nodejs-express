@@ -31,8 +31,25 @@ const getUrl = (filename, type) => {
 	return `${baseUrl}/${folderPath}${filename}`;
 };
 
+const deleteUploadedFile = (filePath) => {
+	fs.access(filePath, fs.constants.F_OK, (err) => {
+		if (!err) {
+			fs.unlink(filePath, (deleteErr) => {
+				if (deleteErr) {
+					return sendErrorResponse(
+						`Error deleting file: ${deleteErr}`
+					);
+				}
+			});
+		} else {
+			return sendErrorResponse("File does not exist");
+		}
+	});
+};
+
 module.exports = {
 	sendSuccessResponse,
 	sendErrorResponse,
 	getUrl,
+	deleteUploadedFile
 };
