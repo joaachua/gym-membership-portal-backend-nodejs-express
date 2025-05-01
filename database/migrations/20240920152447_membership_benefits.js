@@ -5,9 +5,9 @@
 exports.up = function (knex) {
 	return knex.schema.createTable("membership_benefits", function (table) {
 		table.increments("id").primary();
+		table.integer("membership_id").notNullable();
 		table.string("benefit_name").notNullable();
 		table.text("benefit_description").nullable();
-		table.boolean("active").defaultTo(true);
 		table.timestamps(true, true);
 	});
 };

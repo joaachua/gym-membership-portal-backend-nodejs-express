@@ -6,15 +6,15 @@ exports.up = function (knex) {
 	return knex.schema.createTable("users", function (table) {
 		table.increments("id").primary();
 		table.string("salutation").nullable();
-		table.string("first_name").nullable();
-		table.string("last_name").notNullable();
 		table.string("username").notNullable().unique();
-		table.string("phone_number").notNullable().unique();
+		table.string("full_name").notNullable();
 		table.string("email").notNullable().unique();
+		table.string("phone_number").notNullable().unique();
+		table.string("id_no").notNullable().unique();
 		table.string("password").nullable();
         table.boolean("is_verified").defaultTo(false);
-		table.string("role").nullable();
-		table.string("platform").nullable();
+		table.integer("role").nullable();
+		table.integer("platform").nullable();
 		table.string("otp_code").nullable();
 		table.datetime("otp_sent_at").nullable();
 		table.string("reset_token").nullable();

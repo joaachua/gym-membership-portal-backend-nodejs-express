@@ -8,7 +8,7 @@ exports.up = function (knex) {
 		table.string("title").notNullable();
 		table.text("description").nullable();
 		table.string("image").nullable();
-		table.enum("type", ["classes", "membership_plan", "url"]).notNullable();
+		table.integer("type").notNullable(); // 1 = classes, 2 = membership_plan, 3 = url
 		table.string("redirect_link").nullable();
 		table.integer("sequence").notNullable().defaultTo(1); // Determines order of display
 		table.integer("status").notNullable().defaultTo(0); // 0 = inactive, 1 = active
