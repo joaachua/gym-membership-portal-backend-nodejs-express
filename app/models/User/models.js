@@ -1,5 +1,5 @@
 const Ads = require('./Ads');
-const Classess = require('./Classess');
+const Classes = require('./Classes');
 const Content = require('./Content');
 const Membership = require('./Membership');
 const Notification = require('./Notification');
@@ -10,7 +10,7 @@ const Trainer = require('./Trainer');
 
 const UserModel = {
     Ads,
-    Classess,
+    Classes,
     Content,
     Membership,
     Notification,

@@ -1,5 +1,5 @@
 const Ads = require('./Ads');
-const Classess = require('./Classess');
+const Classes = require('./Classes');
 const Content = require('./Content');
 const Membership = require('./Membership');
 const Notification = require('./Notification');
@@ -10,9 +10,9 @@ const RolesPermissions = require('./RolesPermissions');
 const Trainer = require('./Trainer');
 const User = require('./User');
 
-const UserModel = {
+const AdminModel = {
     Ads,
-    Classess,
+    Classes,
     Content,
     Membership,
     Notification,
@@ -24,4 +24,4 @@ const UserModel = {
     User
 };
 
-module.exports = UserModel;
+module.exports = AdminModel;
