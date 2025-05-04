@@ -9,6 +9,135 @@ const path = require("path");
 
 const { Auth, AdminModel } = require("../../models/models");
 
+/**
+ * @swagger
+ * tags:
+ *   name: Admin Advertisements
+ *   description: API for managing admin Advertisements
+ */
+
+/**
+ * @swagger
+ * /admin/ads/store:
+ *   post:
+ *     summary: Create a new advertisement
+ *     tags: [Advertisements]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/AdvertisementInput'
+ *     responses:
+ *       200:
+ *         description: Advertisement created successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/AdvertisementResponse'
+ *       400:
+ *         description: Bad Request
+ */
+
+/**
+ * @swagger
+ * /admin/ads/update:
+ *   post:
+ *     summary: Update an existing advertisement
+ *     tags: [Advertisements]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/AdvertisementUpdateInput'
+ *     responses:
+ *       200:
+ *         description: Advertisement updated successfully
+ *       400:
+ *         description: Invalid input or advertisement not found
+ */
+
+/**
+ * @swagger
+ * /admin/ads/view:
+ *   post:
+ *     summary: View a specific advertisement by ID
+ *     tags: [Advertisements]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [id]
+ *             properties:
+ *               id:
+ *                 type: integer
+ *     responses:
+ *       200:
+ *         description: Advertisement retrieved successfully
+ *       400:
+ *         description: Advertisement not found
+ */
+
+/**
+ * @swagger
+ * /admin/ads/delete:
+ *   post:
+ *     summary: Delete an advertisement by ID
+ *     tags: [Advertisements]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [id]
+ *             properties:
+ *               id:
+ *                 type: integer
+ *     responses:
+ *       200:
+ *         description: Advertisement deleted successfully
+ *       400:
+ *         description: Advertisement not found
+ */
+
+/**
+ * @swagger
+ * /admin/ads/list:
+ *   post:
+ *     summary: List advertisements with optional filters
+ *     tags: [Advertisements]
+ *     requestBody:
+ *       required: false
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               title:
+ *                 type: string
+ *               type:
+ *                 type: string
+ *               status:
+ *                 type: integer
+ *               start_date:
+ *                 type: string
+ *                 format: date
+ *               end_date:
+ *                 type: string
+ *                 format: date
+ *               page:
+ *                 type: integer
+ *               perPage:
+ *                 type: integer
+ *     responses:
+ *       200:
+ *         description: List of advertisements
+ */
+
 exports.uploadFile = [
 	async (req, res) => {
 		const errors = validationResult(req);

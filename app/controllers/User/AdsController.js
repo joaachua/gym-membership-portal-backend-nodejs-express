@@ -6,6 +6,47 @@ const {
 
 const { Auth, UserModel } = require("../../models/models");
 
+/**
+ * @swagger
+ * tags:
+ *   name: User Advertisements
+ *   description: API for getting user Advertisements
+ */
+
+/**
+ * @swagger
+ * /user/ads/list:
+ *   post:
+ *     summary: List advertisements with optional filters
+ *     tags: [Advertisements]
+ *     requestBody:
+ *       required: false
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               title:
+ *                 type: string
+ *               type:
+ *                 type: string
+ *               status:
+ *                 type: integer
+ *               start_date:
+ *                 type: string
+ *                 format: date
+ *               end_date:
+ *                 type: string
+ *                 format: date
+ *               page:
+ *                 type: integer
+ *               perPage:
+ *                 type: integer
+ *     responses:
+ *       200:
+ *         description: List of advertisements
+ */
+
 exports.adsList = [
 	async (req, res) => {
 		try {
