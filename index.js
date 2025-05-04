@@ -9,7 +9,7 @@ const adminRoutes = require("./routes/admin");
 const userRoutes = require("./routes/user");
 
 // Swagger
-const { swaggerUi, specs } = require("./config/swagger");
+const { swaggerUi, specs } = require("./config/swagger-option");
 
 require("dotenv").config();
 
