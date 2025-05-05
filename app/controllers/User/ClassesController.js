@@ -2,12 +2,70 @@ const { body, validationResult } = require("express-validator");
 const {
 	sendSuccessResponse,
 	sendErrorResponse,
-    getUrl,
-    deleteUploadedFile
+    getUrl
 } = require("../../../services/helper");
 const path = require("path");
 
 const { Auth, UserModel } = require("../../models/models");
+
+/**
+ * @swagger
+ * tags:
+ *   name: User Classes
+ *   description: API for getting user class
+ */
+
+/**
+ * @swagger
+ * /user/class/view:
+ *   post:
+ *     summary: View class details by ID
+ *     tags:
+ *       - User Classes
+ *     requestBody:
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - id
+ *             properties:
+ *               id:
+ *                 type: integer
+ *     responses:
+ *       200:
+ *         description: Class details retrieved successfully
+ *       400:
+ *         description: Invalid class ID or not found
+ */
+
+/**
+ * @swagger
+ * /user/class/list:
+ *   post:
+ *     summary: Get a list of classes (with optional filters)
+ *     tags:
+ *       - User Classes
+ *     requestBody:
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               search:
+ *                 type: string
+ *               status:
+ *                 type: integer
+ *               page:
+ *                 type: integer
+ *               perPage:
+ *                 type: integer
+ *     responses:
+ *       200:
+ *         description: List of classes retrieved successfully
+ *       400:
+ *         description: Failed to retrieve class list
+ */
 
 exports.viewClass = [
 	async (req, res) => {

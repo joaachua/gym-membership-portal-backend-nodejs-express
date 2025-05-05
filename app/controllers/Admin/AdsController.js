@@ -18,10 +18,80 @@ const { Auth, AdminModel } = require("../../models/models");
 
 /**
  * @swagger
+ * /admin/ads/upload-file:
+ *   post:
+ *     summary: Upload a file (PDF or image).
+ *     description: Upload a file to the server. Only PDFs and image files are allowed.
+ *     tags:
+ *       - Admin Advertisements
+ *     requestBody:
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               file:
+ *                 type: string
+ *                 format: binary
+ *             required:
+ *               - file
+ *     responses:
+ *       200:
+ *         description: File processed successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 status_code:
+ *                   type: integer
+ *                   example: 200
+ *                 message:
+ *                   type: string
+ *                   example: File processed successfully
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       file:
+ *                         type: string
+ *                         example: "sample-file.pdf"
+ *       400:
+ *         description: Bad Request
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 status_code:
+ *                   type: integer
+ *                   example: 400
+ *                 message:
+ *                   type: string
+ *                   example: Validation failed
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       msg:
+ *                         type: string
+ *                         example: "File is required"
+ */
+
+/**
+ * @swagger
  * /admin/ads/store:
  *   post:
  *     summary: Create a new advertisement
- *     tags: [Advertisements]
+ *     tags: [Admin Advertisements]
  *     requestBody:
  *       required: true
  *       content:
@@ -44,7 +114,7 @@ const { Auth, AdminModel } = require("../../models/models");
  * /admin/ads/update:
  *   post:
  *     summary: Update an existing advertisement
- *     tags: [Advertisements]
+ *     tags: [Admin Advertisements]
  *     requestBody:
  *       required: true
  *       content:
@@ -63,7 +133,7 @@ const { Auth, AdminModel } = require("../../models/models");
  * /admin/ads/view:
  *   post:
  *     summary: View a specific advertisement by ID
- *     tags: [Advertisements]
+ *     tags: [Admin Advertisements]
  *     requestBody:
  *       required: true
  *       content:
@@ -86,7 +156,7 @@ const { Auth, AdminModel } = require("../../models/models");
  * /admin/ads/delete:
  *   post:
  *     summary: Delete an advertisement by ID
- *     tags: [Advertisements]
+ *     tags: [Admin Advertisements]
  *     requestBody:
  *       required: true
  *       content:
@@ -109,7 +179,7 @@ const { Auth, AdminModel } = require("../../models/models");
  * /admin/ads/list:
  *   post:
  *     summary: List advertisements with optional filters
- *     tags: [Advertisements]
+ *     tags: [Admin Advertisements]
  *     requestBody:
  *       required: false
  *       content:

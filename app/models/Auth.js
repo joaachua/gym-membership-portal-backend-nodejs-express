@@ -1,30 +1,30 @@
 const bcrypt = require("bcryptjs");
 const knex = require("../../config/db");
-const {
-	sendSuccessResponse,
-	sendErrorResponse,
-} = require("../../services/helper");
 
 const Auth = {
 	findUserById: async (id) => {
 		try {
 			const user = await knex("users").where({ id }).first();
-			if (!user) return sendErrorResponse("User not found");
-			return sendSuccessResponse("User retrieved", user);
+			if (!user) throw new Error("User not found");
+			return user;
 		} catch (error) {
-			return sendErrorResponse("Error retrieving user", error);
+			throw error;
 		}
-	},
+	},	
 
 	findUserByEmail: async (email) => {
 		try {
 			const user = await knex("users").where({ email }).first();
-			if (!user) return sendErrorResponse("User not found");
-			return sendSuccessResponse("User retrieved", user);
+			if (!user) throw new Error("User not found");
+			return user;
 		} catch (error) {
-			return sendErrorResponse("Error retrieving user", error);
+			throw error;
 		}
 	},
+	
+	findAdminByUsername: async (username) => {
+        return knex('users').where({ username }).first();
+    },
 
 	updateUserOTP: async (email, otp_code, otpSentAt) => {
 		try {
@@ -32,47 +32,44 @@ const Auth = {
 				.where({ email })
 				.update({ otp_code, otp_sent_at: otpSentAt });
 
-			if (updated) return sendSuccessResponse("OTP updated successfully");
-			return sendErrorResponse("Failed to update OTP");
+			if (!updated) throw new Error("Failed to update OTP");
+			return updated;
 		} catch (error) {
-			return sendErrorResponse("Error updating OTP", error);
+			throw error;
 		}
 	},
 
-	verifyUser: async (phone_number) => {
-		try {
-			const updated = await knex("users")
-				.where({ phone_number })
-				.update({ is_verified: true });
+	updateUserResetOTP: async (email, otp_code, otpSentAt) => {
+		return knex("users")
+			.where({ email })
+			.update({ reset_otp_code: otp_code, reset_otp_sent_at: otpSentAt });
+	},
 
-			if (updated) return sendSuccessResponse("User verified successfully");
-			return sendErrorResponse("User verification failed");
-		} catch (error) {
-			return sendErrorResponse("Error verifying user", error);
-		}
+	verifyUser: async (email) => {
+		return knex("users").where({ email }).update({ is_verified: true });
 	},
 
 	updateUserProfile: async (id, data) => {
-		const { salutation, first_name, last_name, username, phone_number, email } =
-			data;
+		const { id, salutation, username, full_name, role, email, phone_number, password } = data;
 
 		const trx = await knex.transaction();
 
 		try {
 			const [userId] = await trx("users").where({ id }).update({
 				salutation,
-				first_name,
-				last_name,
-				username,
+				username, 
+				full_name, 
+				role, 
+				email, 
 				phone_number,
-				email,
+				password
 			});
 
 			await trx.commit();
-			return sendSuccessResponse("User profile updated successfully", { userId });
+			return userId;
 		} catch (error) {
 			await trx.rollback();
-			return sendErrorResponse("Error updating user profile", error);
+			throw error;
 		}
 	},
 
@@ -83,10 +80,10 @@ const Auth = {
 				.where({ id })
 				.update({ password: hashedPassword });
 
-			if (updated) return sendSuccessResponse("Password updated successfully");
-			return sendErrorResponse("Failed to update password");
+			if (!updated) throw new Error("Failed to update password");
+			return updated;
 		} catch (error) {
-			return sendErrorResponse("Error updating password", error);
+			throw error;
 		}
 	},
 
@@ -97,12 +94,15 @@ const Auth = {
 				reset_token_expires_at: expiresAt,
 			});
 
-			if (updated)
-				return sendSuccessResponse("Reset token updated successfully");
-			return sendErrorResponse("Failed to update reset token");
+			if (!updated) throw new Error("Failed to update reset token");
+			return updated;
 		} catch (error) {
-			return sendErrorResponse("Error updating reset token", error);
+			throw error;
 		}
+	},
+
+	updateUserFCMToken: async (userId, fcmToken) => {
+		return knex("users").where({ id: userId }).update({ fcm_token: fcmToken });
 	},
 
 	clearResetToken: async (id) => {
@@ -112,18 +112,17 @@ const Auth = {
 				reset_token_expires_at: null,
 			});
 
-			if (clearToken) return sendSuccessResponse("Token cleared successfully");
+			return clearToken;
 		} catch (error) {
-			return sendErrorResponse("Error updating password", error);
+			throw error;
 		}
 	},
 
 	registerUser: async (data) => {
 		const {
 			salutation,
-			first_name,
-			last_name,
 			username,
+			full_name,
 			phone_number,
 			email,
 			password,
@@ -143,8 +142,7 @@ const Auth = {
 			const hashedPassword = await bcrypt.hash(password, 10);
 			const [userId] = await trx("users").insert({
 				salutation,
-				first_name,
-				last_name,
+				full_name,
 				username,
 				phone_number,
 				email,
@@ -154,12 +152,35 @@ const Auth = {
 			});
 
 			await trx.commit();
-			return sendSuccessResponse("User registered successfully", { userId });
+			return userId;
 		} catch (error) {
 			await trx.rollback();
-			return sendErrorResponse("Error registering user", error);
+			throw error;
 		}
 	},
+
+	findPermissionsByEmail: async (email) => {
+		return knex("users")
+			.select("permissions.permission_group", "permissions.permission_name")
+			.join("roles", "users.role", "=", "roles.id")
+			.join("role_permissions", "roles.id", "=", "role_permissions.role_id")
+			.join("permissions", "role_permissions.permission_id", "=", "permissions.id")
+			.where("users.email", email);
+	},
+
+	findAdminByResetToken: async (token) => {
+        return knex('users')
+            .where({ reset_token: token })
+            .andWhere('reset_token_expires_at', '>', new Date())
+            .first();
+    },
+	
+	findUserByResetToken: async (token) => {
+        return knex('users')
+            .where({ reset_token: token })
+            .andWhere('reset_token_expires_at', '>', new Date())
+            .first();
+    },
 };
 
 module.exports = Auth;

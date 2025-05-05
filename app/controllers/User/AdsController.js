@@ -18,7 +18,7 @@ const { Auth, UserModel } = require("../../models/models");
  * /user/ads/list:
  *   post:
  *     summary: List advertisements with optional filters
- *     tags: [Advertisements]
+ *     tags: [User Advertisements]
  *     requestBody:
  *       required: false
  *       content:

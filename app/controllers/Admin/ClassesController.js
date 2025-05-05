@@ -9,6 +9,274 @@ const path = require("path");
 
 const { Auth, AdminModel } = require("../../models/models");
 
+/**
+ * @swagger
+ * tags:
+ *   name: Admin Classes
+ *   description: API for getting admin class
+ */
+
+/**
+ * @swagger
+ * /admin/class/upload-file:
+ *   post:
+ *     summary: Upload a file (PDF or image).
+ *     description: Upload a file to the server. Only PDFs and image files are allowed.
+ *     tags:
+ *       - Admin Classes
+ *     requestBody:
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               file:
+ *                 type: string
+ *                 format: binary
+ *             required:
+ *               - file
+ *     responses:
+ *       200:
+ *         description: File processed successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 status_code:
+ *                   type: integer
+ *                   example: 200
+ *                 message:
+ *                   type: string
+ *                   example: File processed successfully
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       file:
+ *                         type: string
+ *                         example: "sample-file.pdf"
+ *       400:
+ *         description: Bad Request
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 status_code:
+ *                   type: integer
+ *                   example: 400
+ *                 message:
+ *                   type: string
+ *                   example: Validation failed
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       msg:
+ *                         type: string
+ *                         example: "File is required"
+ */
+
+/**
+ * @swagger
+ * /admin/class/store:
+ *   post:
+ *     summary: Create a new class
+ *     description: Store a new class with required information.
+ *     tags:
+ *       - Admin Classes
+ *     requestBody:
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               title:
+ *                 type: string
+ *               description:
+ *                 type: string
+ *               featured_img:
+ *                 type: string
+ *               trainer_id:
+ *                 type: integer
+ *               is_recurring:
+ *                 type: boolean
+ *               recurrence_pattern:
+ *                 type: string
+ *               status:
+ *                 type: integer
+ *             required:
+ *               - title
+ *               - description
+ *     responses:
+ *       200:
+ *         description: Class created successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 status_code:
+ *                   type: integer
+ *                   example: 200
+ *                 message:
+ *                   type: string
+ *                   example: Class created successfully
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: integer
+ *                       example: 1
+ *       400:
+ *         description: Validation failed
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 status_code:
+ *                   type: integer
+ *                   example: 400
+ *                 message:
+ *                   type: string
+ *                   example: Title and description are required
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: string
+ *                     example: "Title and description are required"
+ */
+
+/**
+ * @swagger
+ * /admin/class/update:
+ *   post:
+ *     summary: Update an existing class
+ *     tags:
+ *       - Admin Classes
+ *     requestBody:
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - id
+ *             properties:
+ *               id:
+ *                 type: integer
+ *               title:
+ *                 type: string
+ *               description:
+ *                 type: string
+ *               featured_img:
+ *                 type: string
+ *               trainer_id:
+ *                 type: integer
+ *               is_recurring:
+ *                 type: boolean
+ *               recurrence_pattern:
+ *                 type: string
+ *               status:
+ *                 type: integer
+ *     responses:
+ *       200:
+ *         description: Class updated successfully
+ *       400:
+ *         description: Update failed
+ */
+
+/**
+ * @swagger
+ * /admin/class/view:
+ *   post:
+ *     summary: View class details by ID
+ *     tags:
+ *       - Admin Classes
+ *     requestBody:
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - id
+ *             properties:
+ *               id:
+ *                 type: integer
+ *     responses:
+ *       200:
+ *         description: Class details retrieved successfully
+ *       400:
+ *         description: Invalid class ID or not found
+ */
+
+/**
+ * @swagger
+ * /admin/class/delete:
+ *   post:
+ *     summary: Delete a class by ID
+ *     tags:
+ *       - Admin Classes
+ *     requestBody:
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - id
+ *             properties:
+ *               id:
+ *                 type: integer
+ *     responses:
+ *       200:
+ *         description: Class deleted successfully
+ *       400:
+ *         description: Class not found or delete failed
+ */
+
+/**
+ * @swagger
+ * /admin/class/list:
+ *   post:
+ *     summary: Get a list of classes (with optional filters)
+ *     tags:
+ *       - Admin Classes
+ *     requestBody:
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               search:
+ *                 type: string
+ *               status:
+ *                 type: integer
+ *               page:
+ *                 type: integer
+ *               perPage:
+ *                 type: integer
+ *     responses:
+ *       200:
+ *         description: List of classes retrieved successfully
+ *       400:
+ *         description: Failed to retrieve class list
+ */
+
 exports.uploadFile = [
 	async (req, res) => {
 		const errors = validationResult(req);

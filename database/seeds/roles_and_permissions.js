@@ -28,6 +28,12 @@ exports.seed = async function (knex) {
 		{ permission_group: "Ads Management", permission_name: "Edit" },
 		{ permission_group: "Ads Management", permission_name: "View" },
 		{ permission_group: "Ads Management", permission_name: "Delete" },
+
+		{ permission_group: "Class Management", permission_name: "Create" },
+		{ permission_group: "Class Management", permission_name: "List" },
+		{ permission_group: "Class Management", permission_name: "Edit" },
+		{ permission_group: "Class Management", permission_name: "View" },
+		{ permission_group: "Class Management", permission_name: "Delete" },
 	];
 
 	await Promise.all(
@@ -72,6 +78,27 @@ exports.seed = async function (knex) {
 			permission_id: permissionMap["Ads Management-Delete"],
 		},
 
+		{
+			role_id: roleMap["Super Admin"],
+			permission_id: permissionMap["Class Management-Create"],
+		},
+		{
+			role_id: roleMap["Super Admin"],
+			permission_id: permissionMap["Class Management-List"],
+		},
+		{
+			role_id: roleMap["Super Admin"],
+			permission_id: permissionMap["Class Management-View"],
+		},
+		{
+			role_id: roleMap["Super Admin"],
+			permission_id: permissionMap["Class Management-Edit"],
+		},
+		{
+			role_id: roleMap["Super Admin"],
+			permission_id: permissionMap["Class Management-Delete"],
+		},
+
 		// Admin Role Permissions
 		{
 			role_id: roleMap["Admin"],
@@ -92,6 +119,27 @@ exports.seed = async function (knex) {
 		{
 			role_id: roleMap["Admin"],
 			permission_id: permissionMap["Ads Management-Delete"],
+		},
+
+		{
+			role_id: roleMap["Admin"],
+			permission_id: permissionMap["Class Management-Create"],
+		},
+		{
+			role_id: roleMap["Admin"],
+			permission_id: permissionMap["Class Management-List"],
+		},
+		{
+			role_id: roleMap["Admin"],
+			permission_id: permissionMap["Class Management-View"],
+		},
+		{
+			role_id: roleMap["Admin"],
+			permission_id: permissionMap["Class Management-Edit"],
+		},
+		{
+			role_id: roleMap["Admin"],
+			permission_id: permissionMap["Class Management-Delete"],
 		},
 	];
 
