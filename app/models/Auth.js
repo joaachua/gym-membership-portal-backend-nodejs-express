@@ -63,10 +63,9 @@ const Auth = {
 
 	updatePassword: async (id, password) => {
 		try {
-			const hashedPassword = await bcrypt.hash(password, 10);
 			const updated = await knex("users")
 				.where({ id })
-				.update({ password: hashedPassword });
+				.update({ password });
 
 			if (!updated) throw new Error("Failed to update password");
 			return updated;
@@ -129,14 +128,13 @@ const Auth = {
 				}
 			}
 
-			const hashedPassword = await bcrypt.hash(password, 10);
 			const [userId] = await trx("users").insert({
 				salutation,
 				full_name,
 				username,
 				phone_number,
 				email,
-				password: hashedPassword,
+				password,
 				role,
 				platform,
 			});
