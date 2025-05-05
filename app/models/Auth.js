@@ -3,23 +3,11 @@ const knex = require("../../config/db");
 
 const Auth = {
 	findUserById: async (id) => {
-		try {
-			const user = await knex("users").where({ id }).first();
-			if (!user) throw new Error("User not found");
-			return user;
-		} catch (error) {
-			throw error;
-		}
+		return  knex("users").where({ id }).first();
 	},	
 
 	findUserByEmail: async (email) => {
-		try {
-			const user = await knex("users").where({ email }).first();
-			if (!user) throw new Error("User not found");
-			return user;
-		} catch (error) {
-			throw error;
-		}
+		return knex("users").where({ email }).first();
 	},
 	
 	findAdminByUsername: async (username) => {
@@ -133,10 +121,12 @@ const Auth = {
 		const trx = await knex.transaction();
 
 		try {
-			const roles = await trx("roles").where({ id: role }).first();
-			if (!roles) {
-				await trx.rollback();
-				throw new Error("Invalid role specified");
+			if (role) {
+				const roles = await trx("roles").where({ id: role }).first();
+				if (!roles) {
+					await trx.rollback();
+					throw new Error("Invalid role specified");
+				}
 			}
 
 			const hashedPassword = await bcrypt.hash(password, 10);
