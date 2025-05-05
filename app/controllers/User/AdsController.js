@@ -52,19 +52,11 @@ exports.adsList = [
 		try {
 			const ads = await UserModel.Ads.listAdvertisements(req.body);
 
-			return res
-				.status(200)
-				.json(
-					sendSuccessResponse("Advertisements retrieved successfully", ads)
-				);
+			return sendSuccessResponse(res, 200, res, 200, "Advertisements retrieved successfully", ads);
 		} catch (error) {
-			return res
-				.status(500)
-				.json(
-					sendErrorResponse("Failed to retrieve advertisements", [
-						error.message || "Internal Server Error",
-					])
-				);
+			return sendErrorResponse(res, 400, res, 500, "Failed to retrieve advertisements", [
+				error.message || "Internal Server Error",
+			]);
 		}
 	},
 ];

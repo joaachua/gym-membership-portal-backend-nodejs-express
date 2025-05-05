@@ -136,7 +136,7 @@ const Auth = {
 			const roles = await trx("roles").where({ id: role }).first();
 			if (!roles) {
 				await trx.rollback();
-				return sendErrorResponse("Invalid role specified");
+				throw new Error("Invalid role specified");
 			}
 
 			const hashedPassword = await bcrypt.hash(password, 10);

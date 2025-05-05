@@ -10,10 +10,10 @@ const authenticateToken = (req, res, next) => {
 			? authHeader.split(" ")[1]
 			: null;
 
-	if (token == null) return sendErrorResponse("No token provided");
+	if (token == null) return sendErrorResponse(res, 400, res, 401, "No token provided");
 
 	jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
-		if (err) return sendErrorResponse("Invalid token");
+		if (err) return sendErrorResponse(res, 400, res, 403, "Invalid token");
 
 		req.user = user;
 		next();
@@ -53,7 +53,7 @@ const authorize = (requiredPermissions) => {
 	return async (req, res, next) => {
 		try {
 			if (!req.user || !req.user.id) {
-				return sendErrorResponse("Unauthorized: User is not authenticated.");
+				return sendErrorResponse(res, 400, res, 400, "Unauthorized: User is not authenticated.");
 			}
 
 			const userId = req.user.id;
@@ -64,7 +64,7 @@ const authorize = (requiredPermissions) => {
 			);
 
 			if (!hasPermission) {
-				return sendErrorResponse(
+				return sendErrorResponse(res, 400, res, 500,
 					"Access denied: You do not have the necessary permissions to perform this action.",
 					["Forbidden"]
 				);

@@ -10,7 +10,6 @@ const {
 } = require("../../services/helper");
 const { body, validationResult } = require("express-validator");
 
-
 /**
  * @swagger
  * tags:
@@ -649,7 +648,7 @@ const { body, validationResult } = require("express-validator");
  *   post:
  *     summary: Check user passcode field
  *     tags:
- *       - Auth 
+ *       - Auth
  *     security:
  *       - bearerAuth: []
  *     responses:
@@ -767,9 +766,7 @@ const { body, validationResult } = require("express-validator");
 
 // Admin Login Validation
 exports.loginAdmin = [
-	body("email")
-		.isEmail()
-		.withMessage("Email must be a valid email address"),
+	body("email").isEmail().withMessage("Email must be a valid email address"),
 
 	body("password")
 		.exists()
@@ -783,6 +780,8 @@ exports.loginAdmin = [
 		const errors = validationResult(req);
 		if (!errors.isEmpty()) {
 			return sendErrorResponse(
+				res,
+				400,
 				"Validation failed.",
 				errors.array().map((err) => ({
 					field: err.param,
@@ -795,20 +794,32 @@ exports.loginAdmin = [
 		try {
 			const admin = await Auth.findUserByEmail(email);
 			if (!admin) {
-				return sendErrorResponse("Admin email not found");
+				return sendErrorResponse(res, 400, "Admin email not found");
 			}
 
 			if (admin.platform !== 2) {
-				return sendErrorResponse("Access denied. You are not an admin");
+				return sendErrorResponse(
+					res,
+					400,
+					"Access denied. You are not an admin"
+				);
 			}
 
 			if (!admin.password) {
-				return sendErrorResponse("Invalid credentials. No password set for this admin.");
+				return sendErrorResponse(
+					res,
+					400,
+					"Invalid credentials. No password set for this admin."
+				);
 			}
 
 			const passwordMatch = await bcrypt.compare(password, admin.password);
 			if (!passwordMatch) {
-				return sendErrorResponse("Invalid credentials. Password is incorrect.");
+				return sendErrorResponse(
+					res,
+					400,
+					"Invalid credentials. Password is incorrect."
+				);
 			}
 
 			const token = jwt.sign(
@@ -823,7 +834,7 @@ exports.loginAdmin = [
 
 			const permissions = await Auth.findPermissionsByEmail(email);
 
-			sendSuccessResponse("Login successful.", {
+			sendSuccessResponse(res, 200, "Login successful.", {
 				token,
 				id: admin.id,
 				username: admin.username,
@@ -834,7 +845,7 @@ exports.loginAdmin = [
 				permissions,
 			});
 		} catch (error) {
-			sendErrorResponse("Error logging in.", [
+			sendErrorResponse(res, 400, "Error logging in.", [
 				error.message || "Internal Server Error",
 			]);
 		}
@@ -843,14 +854,14 @@ exports.loginAdmin = [
 
 // Forgot password
 exports.forgotPassword = [
-	body("email")
-		.isEmail()
-		.withMessage("Email must be a valid email address"),
+	body("email").isEmail().withMessage("Email must be a valid email address"),
 
 	async (req, res) => {
 		const errors = validationResult(req);
 		if (!errors.isEmpty()) {
 			return sendErrorResponse(
+				res,
+				400,
 				"Validation failed.",
 				errors.array().map((err) => ({
 					field: err.param,
@@ -863,11 +874,15 @@ exports.forgotPassword = [
 		try {
 			const admin = await Auth.findUserByEmail(email);
 			if (!admin) {
-				return sendErrorResponse("User email not found");
+				return sendErrorResponse(res, 400, "User email not found");
 			}
 
 			if (admin.platform !== 2) {
-				return sendErrorResponse("Access denied. You are not an admin");
+				return sendErrorResponse(
+					res,
+					400,
+					"Access denied. You are not an admin"
+				);
 			}
 
 			const token = crypto.randomBytes(32).toString("hex");
@@ -882,9 +897,11 @@ exports.forgotPassword = [
 				resetLink,
 			});
 
-			sendSuccessResponse("Password reset email sent successfully.");
+			sendSuccessResponse(res, 200, "Password reset email sent successfully.");
 		} catch (error) {
 			sendErrorResponse(
+				res,
+				400,
 				"Error processing the password reset request.",
 				[error.message || "Internal Server Error"]
 			);
@@ -898,7 +915,7 @@ exports.resetPassword = [
 
 	body("password")
 		.isLength({ min: 6 })
-	  	.withMessage("Password must be at least 6 characters long"),
+		.withMessage("Password must be at least 6 characters long"),
 
 	body("confirm_password")
 		.isLength({ min: 6 })
@@ -910,6 +927,8 @@ exports.resetPassword = [
 		const errors = validationResult(req);
 		if (!errors.isEmpty()) {
 			return sendErrorResponse(
+				res,
+				400,
 				"Validation failed.",
 				errors.array().map((err) => ({
 					field: err.param,
@@ -922,11 +941,15 @@ exports.resetPassword = [
 		try {
 			const admin = await Auth.findAdminByResetToken(token);
 			if (!admin) {
-				return sendErrorResponse("Invalid or expired reset token");
+				return sendErrorResponse(res, 400, "Invalid or expired reset token");
 			}
 
 			if (admin.platform !== 2) {
-				return sendErrorResponse("Access denied. You are not an admin");
+				return sendErrorResponse(
+					res,
+					400,
+					"Access denied. You are not an admin"
+				);
 			}
 
 			const hashedPassword = await bcrypt.hash(password, 10);
@@ -945,20 +968,20 @@ exports.resetPassword = [
 				);
 
 				// Add success response here
-				return sendSuccessResponse("Password reset successfully.");
+				return sendSuccessResponse(res, 200, "Password reset successfully.");
 			} else {
 				// Handle unexpected failure during password update
-				return sendErrorResponse("Failed to update password.");
+				return sendErrorResponse(res, 400, "Failed to update password.");
 			}
 		} catch (error) {
 			console.error("Error resetting password:", error);
-			sendErrorResponse("Error resetting password.", [
+			sendErrorResponse(res, 400, "Error resetting password.", [
 				error.message || "Internal Server Error",
 			]);
 		}
 	},
 ];
-  
+
 // View admin profile
 exports.getAdminProfile = [
 	async (req, res) => {
@@ -966,11 +989,11 @@ exports.getAdminProfile = [
 		try {
 			const admin = await Auth.findUserById(id);
 			if (!admin) {
-				return sendErrorResponse("Admin not found");
+				return sendErrorResponse(res, 400, "Admin not found");
 			}
-			sendSuccessResponse("Admin retrieved successfully", admin);
+			sendSuccessResponse(res, 200, "Admin retrieved successfully", admin);
 		} catch (error) {
-			sendErrorResponse("Error retrieving admin", [
+			sendErrorResponse(res, 400, "Error retrieving admin", [
 				error.message || "Internal Server Error",
 			]);
 		}
@@ -1015,6 +1038,8 @@ exports.updateProfile = [
 		const errors = validationResult(req);
 		if (!errors.isEmpty()) {
 			return sendErrorResponse(
+				res,
+				400,
 				"Validation failed.",
 				errors.array().map((err) => ({
 					field: err.param,
@@ -1028,36 +1053,33 @@ exports.updateProfile = [
 		try {
 			const existingAdmin = await Auth.findUserById(id);
 			if (!existingAdmin) {
-				return sendErrorResponse("Admin not found", []);
+				return sendErrorResponse(res, 400, "Admin not found", []);
 			}
 			if (email) {
 				const existingUserEmail = await Auth.findUserByEmail(email);
 				if (existingUserEmail && existingUserEmail.id !== id) {
-					return sendErrorResponse("Email already exists", []);
+					return sendErrorResponse(res, 400, "Email already exists", []);
 				}
 			}
 
 			if (username) {
 				const existingUserName = await Auth.findAdminByUsername(username);
 				if (existingUserName && existingUserName.id !== id) {
-					return sendErrorResponse("Username already exists", []);
+					return sendErrorResponse(res, 400, "Username already exists", []);
 				}
 			}
 
-			const updatedAdmin = await Auth.updateUserProfile(
-				id,
-				{
-                    username,
-                    full_name,
-                    role,
-                    email,
-                    phone_number
-                }
-			);
+			const updatedAdmin = await Auth.updateUserProfile(id, {
+				username,
+				full_name,
+				role,
+				email,
+				phone_number,
+			});
 
-			sendSuccessResponse("Admin updated successfully", updatedAdmin);
+			sendSuccessResponse(res, 200, "Admin updated successfully", updatedAdmin);
 		} catch (error) {
-			sendErrorResponse("Error update admin", [
+			sendErrorResponse(res, 400, "Error update admin", [
 				error.message || "Internal Server Error",
 			]);
 		}
@@ -1085,6 +1107,8 @@ exports.changePassword = [
 		const errors = validationResult(req);
 		if (!errors.isEmpty()) {
 			return sendErrorResponse(
+				res,
+				400,
 				"Validation failed.",
 				errors.array().map((err) => ({
 					field: err.param,
@@ -1099,19 +1123,23 @@ exports.changePassword = [
 
 			const result = await bcrypt.compare(old_password, admin.password);
 			if (!result) {
-				return sendErrorResponse("Invalid old password");
+				return sendErrorResponse(res, 400, "Invalid old password");
 			}
 
 			if (old_password == new_password) {
-				return sendErrorResponse("New password cannot be the same as old password");
+				return sendErrorResponse(
+					res,
+					400,
+					"New password cannot be the same as old password"
+				);
 			}
 
 			const hashedPassword = await bcrypt.hash(new_password, 10);
 			await Auth.updatePassword(admin.id, hashedPassword);
 
-			sendSuccessResponse("Password change successfully.");
+			sendSuccessResponse(res, 200, "Password change successfully.");
 		} catch (error) {
-			sendErrorResponse("Error changeing password.", [
+			sendErrorResponse(res, 400, "Error changeing password.", [
 				error.message || "Internal Server Error",
 			]);
 		}
@@ -1160,6 +1188,8 @@ exports.registerUser = [
 		const errors = validationResult(req);
 		if (!errors.isEmpty()) {
 			return sendErrorResponse(
+				res,
+				400,
 				"Validation failed.",
 				errors.array().map((err) => ({
 					field: err.param,
@@ -1178,22 +1208,26 @@ exports.registerUser = [
 			const existingUser = await Auth.findUserByEmail(req.body.email);
 			if (existingUser) {
 				if (existingUser.platform === 2) {
-					return sendErrorResponse("Please access the admin portal for this account.");
+					return sendErrorResponse(
+						res,
+						400,
+						"Please access the admin portal for this account."
+					);
 				}
-				
+
 				if (existingUser.is_verified) {
-					return sendErrorResponse("Email is already registered.");
+					return sendErrorResponse(res, 400, "Email is already registered.");
 				} else {
 					// Update existing non-verified user
 					const updateUser = await Auth.updateUserProfile(existingUser.id, {
 						salutation: req.body.salutation,
 						full_name: req.body.full_name,
 						phone_number: req.body.phone_number,
-						password: hashedPassword
+						password: hashedPassword,
 					});
 
 					if (!updateUser) {
-						return sendErrorResponse("Error updating user.");
+						return sendErrorResponse(res, 400, "Error updating user.");
 					}
 
 					const otpCode = crypto.randomInt(100000, 999999).toString();
@@ -1208,12 +1242,12 @@ exports.registerUser = [
 							supportLink: "https://support.example.com",
 						});
 					} catch (emailError) {
-						return sendErrorResponse("Error sending OTP email.", [
+						return sendErrorResponse(res, 400, "Error sending OTP email.", [
 							emailError.message || "Internal Server Error",
 						]);
 					}
 
-					return sendSuccessResponse("OTP sent successfully");
+					return sendSuccessResponse(res, 200, "OTP sent successfully");
 				}
 			}
 
@@ -1223,8 +1257,8 @@ exports.registerUser = [
 				full_name: req.body.full_name,
 				phone_number: req.body.phone_number,
 				password: hashedPassword,
-				platform: req.body.platform
-            });
+				platform: req.body.platform,
+			});
 
 			const newUser = await Auth.findUserById(newUserId);
 
@@ -1240,14 +1274,14 @@ exports.registerUser = [
 					supportLink: "https://support.example.com",
 				});
 			} catch (emailError) {
-				return sendErrorResponse("Error sending OTP email.", [
+				return sendErrorResponse(res, 400, "Error sending OTP email.", [
 					emailError.message || "Internal Server Error",
 				]);
 			}
 
-			return sendSuccessResponse("OTP sent successfully");
+			return sendSuccessResponse(res, 200, "OTP sent successfully");
 		} catch (error) {
-			sendErrorResponse("Error registering user", [
+			sendErrorResponse(res, 400, "Error registering user", [
 				error.message || "Internal Server Error",
 			]);
 		}
@@ -1277,6 +1311,8 @@ exports.loginUser = [
 		const errors = validationResult(req);
 		if (!errors.isEmpty()) {
 			return sendErrorResponse(
+				res,
+				400,
 				"Validation failed.",
 				errors.array().map((err) => ({
 					field: err.param,
@@ -1288,15 +1324,23 @@ exports.loginUser = [
 		try {
 			const user = await Auth.findUserByEmail(req.body.email);
 			if (!user) {
-				return sendErrorResponse("User email not found");
+				return sendErrorResponse(res, 400, "User email not found");
 			}
 
 			if (user && user.platform === 2) {
-				return sendErrorResponse("Please access the admin portal for this account.");
+				return sendErrorResponse(
+					res,
+					400,
+					"Please access the admin portal for this account."
+				);
 			}
 
 			if (user && !user.is_verified) {
-				return sendErrorResponse("User is not verified. Please go through verification process by registering account with this email address again.");
+				return sendErrorResponse(
+					res,
+					400,
+					"User is not verified. Please go through verification process by registering account with this email address again."
+				);
 			}
 
 			const passwordMatch = await bcrypt.compare(
@@ -1305,7 +1349,7 @@ exports.loginUser = [
 			);
 
 			if (!passwordMatch) {
-				return sendErrorResponse("Invalid password.");
+				return sendErrorResponse(res, 400, "Invalid password.");
 			}
 
 			const token = jwt.sign(
@@ -1325,12 +1369,12 @@ exports.loginUser = [
 				await Auth.updateUserFCMToken(user.id, req.body.fcm_token);
 			}
 
-			sendSuccessResponse("Login successfully.",{
+			sendSuccessResponse(res, 200, "Login successfully.", {
 				token,
-				user
+				user,
 			});
 		} catch (error) {
-			sendErrorResponse("Error logging in.", [
+			sendErrorResponse(res, 400, "Error logging in.", [
 				error.message || "Internal Server Error",
 			]);
 		}
@@ -1345,14 +1389,14 @@ exports.verifyOTP = [
 		.isLength({ max: 100 })
 		.withMessage("Email must be less than 100 characters"),
 
-	body("otp_code")
-		.notEmpty()
-		.withMessage("OTP is required"),
+	body("otp_code").notEmpty().withMessage("OTP is required"),
 
 	async (req, res) => {
 		const errors = validationResult(req);
 		if (!errors.isEmpty()) {
 			return sendErrorResponse(
+				res,
+				400,
 				"Validation failed.",
 				errors.array().map((err) => ({
 					field: err.param,
@@ -1364,20 +1408,21 @@ exports.verifyOTP = [
 		try {
 			const user = await Auth.findUserByEmail(req.body.email);
 			if (!user) {
-				return sendErrorResponse("User email not found.");
+				return sendErrorResponse(res, 400, "User email not found.");
 			}
 
 			const isOtpValid = user.otp_code === req.body.otp_code;
 			const otpExpiryDuration = 180000;
-			const isOtpNotExpired = new Date() - new Date(user.otp_sent_at) <= otpExpiryDuration;
+			const isOtpNotExpired =
+				new Date() - new Date(user.otp_sent_at) <= otpExpiryDuration;
 
 			if (!isOtpValid) {
-                return sendErrorResponse("Invalid OTP.");
-            }
+				return sendErrorResponse(res, 400, "Invalid OTP.");
+			}
 
 			if (!isOtpNotExpired) {
-                return sendErrorResponse("OTP has expired.");
-            }
+				return sendErrorResponse(res, 400, "OTP has expired.");
+			}
 
 			if (isOtpValid && isOtpNotExpired) {
 				await Auth.verifyUser(req.body.email);
@@ -1392,14 +1437,14 @@ exports.verifyOTP = [
 					{ expiresIn: "24h" }
 				);
 
-				return sendSuccessResponse("OTP verified successfully.", {
+				return sendSuccessResponse(res, 200, "OTP verified successfully.", {
 					token,
 					email: user.email,
 					message: "User has been successfully verified.",
 				});
 			}
 		} catch (error) {
-			return sendErrorResponse("Error verifying OTP.", [
+			return sendErrorResponse(res, 400, "Error verifying OTP.", [
 				error.message || "Internal Server Error",
 			]);
 		}
@@ -1412,11 +1457,13 @@ exports.resendOtp = [
 		.withMessage("Email must be a valid email address")
 		.isLength({ max: 100 })
 		.withMessage("Email must be less than 100 characters"),
-		
+
 	async (req, res) => {
 		const errors = validationResult(req);
 		if (!errors.isEmpty()) {
 			return sendErrorResponse(
+				res,
+				400,
 				"Validation failed.",
 				errors.array().map((err) => ({
 					field: err.param,
@@ -1424,47 +1471,49 @@ exports.resendOtp = [
 				}))
 			);
 		}
-  
+
 		try {
 			const newUser = await Auth.findUserByEmail(req.body.email);
-	
+
 			if (!newUser) {
-				return sendErrorResponse(
-					"User not found.",
-					["The email does not exist in our records."]
-				);
+				return sendErrorResponse(res, 400, "User not found.", [
+					"The email does not exist in our records.",
+				]);
 			}
-			
+
 			const otpCode = crypto.randomInt(100000, 999999).toString();
 			const otpSentAt = new Date();
 
 			await Auth.updateUserOTP(newUser.email, otpCode, otpSentAt);
 
 			try {
-				const sendEmail = await sendMail(newUser.email, "Your OTP Code", "otp-token", {
-					name: newUser.full_name || "User",
-					otp_code: otpCode,
-					supportLink: "https://support.example.com",
-				});
+				const sendEmail = await sendMail(
+					newUser.email,
+					"Your OTP Code",
+					"otp-token",
+					{
+						name: newUser.full_name || "User",
+						otp_code: otpCode,
+						supportLink: "https://support.example.com",
+					}
+				);
 
 				if (sendEmail) {
-					return sendSuccessResponse("OTP sent successfully", {
+					return sendSuccessResponse(res, 200, "OTP sent successfully", {
 						user: {
 							email: newUser.email,
 						},
 					});
 				}
 			} catch (emailError) {
-				return sendErrorResponse(
-					"Error sending OTP email.",
-					[emailError.message || "Internal Server Error"]
-				);
+				return sendErrorResponse(res, 400, "Error sending OTP email.", [
+					emailError.message || "Internal Server Error",
+				]);
 			}
 		} catch (error) {
-			sendErrorResponse(
-				"Error processing request.",
-				[error.message || "Internal Server Error"]
-			);
+			sendErrorResponse(res, 400, "Error processing request.", [
+				error.message || "Internal Server Error",
+			]);
 		}
 	},
 ];
@@ -1472,15 +1521,17 @@ exports.resendOtp = [
 // Forgot password
 exports.forgotPassword = [
 	body("email")
-    .isEmail()
-    .withMessage("Email must be a valid email address")
-    .isLength({ max: 100 })
-    .withMessage("Email must be less than 100 characters"),
+		.isEmail()
+		.withMessage("Email must be a valid email address")
+		.isLength({ max: 100 })
+		.withMessage("Email must be less than 100 characters"),
 
 	async (req, res) => {
 		const errors = validationResult(req);
 		if (!errors.isEmpty()) {
 			return sendErrorResponse(
+				res,
+				400,
 				"Validation failed.",
 				errors.array().map((err) => ({
 					field: err.param,
@@ -1492,36 +1543,42 @@ exports.forgotPassword = [
 		try {
 			const user = await Auth.findUserByEmail(req.body.email);
 			if (!user) {
-				return sendErrorResponse("User email not found");
+				return sendErrorResponse(res, 400, "User email not found");
 			}
 
 			const otpCode = crypto.randomInt(100000, 999999).toString();
 			const otpSentAt = new Date();
 
 			await Auth.updateUserResetOTP(user.email, otpCode, otpSentAt);
-			
+
 			try {
-				const sendEmail = await sendMail(user.email, "Your OTP Code", "otp-token", {
-					name: user.full_name || "User",
-					otp_code: otpCode,
-					supportLink: "https://support.example.com",
-				});
+				const sendEmail = await sendMail(
+					user.email,
+					"Your OTP Code",
+					"otp-token",
+					{
+						name: user.full_name || "User",
+						otp_code: otpCode,
+						supportLink: "https://support.example.com",
+					}
+				);
 
 				if (sendEmail) {
-					return sendSuccessResponse("OTP sent successfully", {
+					return sendSuccessResponse(res, 200, "OTP sent successfully", {
 						user: {
 							email: user.email,
 						},
 					});
 				}
 			} catch (emailError) {
-				return sendErrorResponse(
-					"Error sending OTP email.",
-					[emailError.message || "Internal Server Error"]
-				);
+				return sendErrorResponse(res, 400, "Error sending OTP email.", [
+					emailError.message || "Internal Server Error",
+				]);
 			}
 		} catch (error) {
 			return sendErrorResponse(
+				res,
+				400,
 				"Error processing the password reset request.",
 				[error.message || "Internal Server Error"]
 			);
@@ -1536,14 +1593,14 @@ exports.verifyResetOtp = [
 		.isLength({ max: 100 })
 		.withMessage("Email must be less than 100 characters"),
 
-	body("reset_otp_code")
-		.notEmpty()
-		.withMessage("OTP is required"),
+	body("reset_otp_code").notEmpty().withMessage("OTP is required"),
 
 	async (req, res) => {
 		const errors = validationResult(req);
 		if (!errors.isEmpty()) {
 			return sendErrorResponse(
+				res,
+				400,
 				"Validation failed.",
 				errors.array().map((err) => ({
 					field: err.param,
@@ -1555,19 +1612,20 @@ exports.verifyResetOtp = [
 		try {
 			const user = await Auth.findUserByEmail(req.body.email);
 			if (!user) {
-				return sendErrorResponse("User email not found.");
+				return sendErrorResponse(res, 400, "User email not found.");
 			}
 
 			const isOtpValid = user.reset_otp_code === req.body.reset_otp_code;
 			const otpExpiryDuration = 180000;
-			const isOtpNotExpired = new Date() - new Date(user.reset_otp_sent_at) <= otpExpiryDuration;
+			const isOtpNotExpired =
+				new Date() - new Date(user.reset_otp_sent_at) <= otpExpiryDuration;
 
 			if (!isOtpValid) {
-				return sendErrorResponse("Invalid OTP.");
+				return sendErrorResponse(res, 400, "Invalid OTP.");
 			}
 
 			if (!isOtpNotExpired) {
-				return sendErrorResponse("OTP has expired.");
+				return sendErrorResponse(res, 400, "OTP has expired.");
 			}
 
 			const token = crypto.randomBytes(32).toString("hex");
@@ -1575,13 +1633,14 @@ exports.verifyResetOtp = [
 
 			await Auth.updateResetToken(user.email, token, resetTokenExpiresAt);
 
-			return sendSuccessResponse("OTP verified successfully.", {
+			return sendSuccessResponse(res, 200, "OTP verified successfully.", {
 				email: user.email,
 				reset_token: token,
-				message: "Password reset token generated. Please use it to reset your password.",
+				message:
+					"Password reset token generated. Please use it to reset your password.",
 			});
 		} catch (error) {
-			return sendErrorResponse("Error verifying OTP.", [
+			return sendErrorResponse(res, 400, "Error verifying OTP.", [
 				error.message || "Internal Server Error",
 			]);
 		}
@@ -1606,6 +1665,8 @@ exports.resetPassword = [
 		const errors = validationResult(req);
 		if (!errors.isEmpty()) {
 			return sendErrorResponse(
+				res,
+				400,
 				"Validation failed.",
 				errors.array().map((err) => ({
 					field: err.param,
@@ -1618,7 +1679,7 @@ exports.resetPassword = [
 		try {
 			const user = await Auth.findUserByResetToken(token);
 			if (!user) {
-				return sendErrorResponse("Invalid reset token");
+				return sendErrorResponse(res, 400, "Invalid reset token");
 			}
 
 			const hashedPassword = await bcrypt.hash(password, 10);
@@ -1634,9 +1695,9 @@ exports.resetPassword = [
 				}
 			);
 
-			sendSuccessResponse("Password reset successfully.");
+			sendSuccessResponse(res, 200, "Password reset successfully.");
 		} catch (error) {
-			sendErrorResponse("Error resetting password.", [
+			sendErrorResponse(res, 400, "Error resetting password.", [
 				error.message || "Internal Server Error",
 			]);
 		}
@@ -1651,9 +1712,7 @@ exports.changePassword = [
 		.isLength({ max: 100 })
 		.withMessage("Email must be less than 100 characters"),
 
-	body("old_password")
-		.notEmpty()
-		.withMessage("Old password is required"),
+	body("old_password").notEmpty().withMessage("Old password is required"),
 
 	body("new_password")
 		.isLength({ min: 8 })
@@ -1669,6 +1728,8 @@ exports.changePassword = [
 		const errors = validationResult(req);
 		if (!errors.isEmpty()) {
 			return sendErrorResponse(
+				res,
+				400,
 				"Validation failed.",
 				errors.array().map((err) => ({
 					field: err.param,
@@ -1681,24 +1742,28 @@ exports.changePassword = [
 		try {
 			const user = await Auth.findUserByEmail(req.user.email);
 			if (!user) {
-				return sendErrorResponse("User not found");
+				return sendErrorResponse(res, 400, "User not found");
 			}
 
 			const result = await bcrypt.compare(old_password, user.password);
 			if (!result) {
-				return sendErrorResponse("Invalid old password");
+				return sendErrorResponse(res, 400, "Invalid old password");
 			}
 
 			if (old_password == new_password) {
-				return sendErrorResponse("New password cannot be the same as old password");
+				return sendErrorResponse(
+					res,
+					400,
+					"New password cannot be the same as old password"
+				);
 			}
 
 			const hashedPassword = await bcrypt.hash(new_password, 10);
 			await Auth.updatePassword(user.id, hashedPassword);
 
-			sendSuccessResponse("Password change successfully.");
+			sendSuccessResponse(res, 200, "Password change successfully.");
 		} catch (error) {
-			sendErrorResponse("Error changeing password.", [
+			sendErrorResponse(res, 400, "Error changeing password.", [
 				error.message || "Internal Server Error",
 			]);
 		}
@@ -1711,28 +1776,22 @@ exports.checkPasscode = [
 			const userProfile = await Auth.findUserByEmail(req.user.email);
 
 			if (!userProfile) {
-				return sendErrorResponse("User not found");
+				return sendErrorResponse(res, 400, "User not found");
 			}
 
 			if (userProfile && userProfile.passcode === null) {
-				return sendSuccessResponse(
-					"User fetched successfully",
-					{
-						passcode: 0
-					}
-				);
+				return sendSuccessResponse(res, 200, "User fetched successfully", {
+					passcode: 0,
+				});
 			}
 
 			if (userProfile && userProfile.passcode !== null) {
-				return sendSuccessResponse(
-					"User fetched successfully",
-					{
-						passcode: 1
-					}
-				);
+				return sendSuccessResponse(res, 200, "User fetched successfully", {
+					passcode: 1,
+				});
 			}
 		} catch (error) {
-			return sendErrorResponse("Error fetching user profile", [
+			return sendErrorResponse(res, 400, "Error fetching user profile", [
 				error.message,
 			]);
 		}
@@ -1744,9 +1803,9 @@ exports.logout = [
 		try {
 			await Auth.updateUserFCMToken(req.user.user_id, null);
 
-			return sendSuccessResponse("Logout successfully");
+			return sendSuccessResponse(res, 200, "Logout successfully");
 		} catch (error) {
-			return sendErrorResponse("Error logging out", [error.message]);
+			return sendErrorResponse(res, 400, "Error logging out", [error.message]);
 		}
-	}
+	},
 ];

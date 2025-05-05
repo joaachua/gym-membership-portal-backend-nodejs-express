@@ -1,17 +1,19 @@
-const sendSuccessResponse = (message, data = {}) => {
-	return {
+const sendSuccessResponse = (res, statusCode, message, data = {}) => {
+	res.status(statusCode).json({
 		success: true,
+		status_code: statusCode,
 		message,
 		data,
-	};
+	});
 };
 
-const sendErrorResponse = (message, error = null) => {
-	return {
+const sendErrorResponse = (res, statusCode, message, errors = null) => {
+	res.status(statusCode).json({
 		success: false,
+		status_code: statusCode,
 		message,
-		error,
-	};
+		data: errors,
+	});
 };
 
 const getUrl = (filename, type) => {
@@ -36,13 +38,15 @@ const deleteUploadedFile = (filePath) => {
 		if (!err) {
 			fs.unlink(filePath, (deleteErr) => {
 				if (deleteErr) {
-					return sendErrorResponse(
+					return sendErrorResponse(res, 400, 
+						res,
+						400,
 						`Error deleting file: ${deleteErr}`
 					);
 				}
 			});
 		} else {
-			return sendErrorResponse("File does not exist");
+			return sendErrorResponse(res, 400, res, 400, "File does not exist");
 		}
 	});
 };
@@ -51,5 +55,5 @@ module.exports = {
 	sendSuccessResponse,
 	sendErrorResponse,
 	getUrl,
-	deleteUploadedFile
+	deleteUploadedFile,
 };
