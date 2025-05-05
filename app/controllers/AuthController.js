@@ -1260,7 +1260,7 @@ exports.registerUser = [
 				platform: req.body.platform,
 			});
 
-			const newUser = await Auth.findUserById(newUserId);
+			const newUser = await Auth.findUserById(newUserId.id);
 
 			const otpCode = crypto.randomInt(100000, 999999).toString();
 			const otpSentAt = new Date();
