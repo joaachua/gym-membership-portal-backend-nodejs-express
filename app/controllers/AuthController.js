@@ -1053,11 +1053,13 @@ exports.updateProfile = [
 
 			const updatedAdmin = await Auth.updateUserProfile(
 				id,
-				username,
-				full_name,
-				role,
-				email,
-				phone_number
+				{
+                    username,
+                    full_name,
+                    role,
+                    email,
+                    phone_number
+                }
 			);
 
 			sendSuccessResponse("Admin updated successfully", updatedAdmin);
@@ -1190,7 +1192,7 @@ exports.registerUser = [
 					return sendErrorResponse("Email is already registered.");
 				} else {
 					// Update existing non-verified user
-					const updateUser = await Auth.updateUserProfile(existingUser.email, {
+					const updateUser = await Auth.updateUserProfile(existingUser.id, {
 						salutation: req.body.salutation,
 						full_name: req.body.full_name,
 						phone_number: req.body.phone_number,

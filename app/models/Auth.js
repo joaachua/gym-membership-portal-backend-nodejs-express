@@ -50,7 +50,7 @@ const Auth = {
 	},
 
 	updateUserProfile: async (id, data) => {
-		const { id, salutation, username, full_name, role, email, phone_number, password } = data;
+		const { salutation, username, full_name, role, email, phone_number, password } = data;
 
 		const trx = await knex.transaction();
 
