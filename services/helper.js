@@ -7,7 +7,7 @@ const sendSuccessResponse = (res, statusCode, message, data = {}) => {
 	});
 };
 
-const sendErrorResponse = (res, statusCode, message, errors = null) => {
+const sendErrorResponse = (res, statusCode, message, errors = []) => {
 	res.status(statusCode).json({
 		success: false,
 		status_code: statusCode,
