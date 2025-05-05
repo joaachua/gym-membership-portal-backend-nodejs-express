@@ -24,6 +24,8 @@ const { Auth, AdminModel } = require("../../models/models");
  *     description: Upload a file to the server. Only PDFs and image files are allowed.
  *     tags:
  *       - Admin Classes
+ *     security:
+ *       - bearerAuth: []
  *     requestBody:
  *       content:
  *         multipart/form-data:
@@ -94,6 +96,8 @@ const { Auth, AdminModel } = require("../../models/models");
  *     description: Store a new class with required information.
  *     tags:
  *       - Admin Classes
+ *     security:
+ *       - bearerAuth: []
  *     requestBody:
  *       content:
  *         application/json:
@@ -170,6 +174,8 @@ const { Auth, AdminModel } = require("../../models/models");
  *     summary: Update an existing class
  *     tags:
  *       - Admin Classes
+ *     security:
+ *       - bearerAuth: []
  *     requestBody:
  *       content:
  *         application/json:
@@ -208,6 +214,8 @@ const { Auth, AdminModel } = require("../../models/models");
  *     summary: View class details by ID
  *     tags:
  *       - Admin Classes
+ *     security:
+ *       - bearerAuth: []
  *     requestBody:
  *       content:
  *         application/json:
@@ -232,6 +240,8 @@ const { Auth, AdminModel } = require("../../models/models");
  *     summary: Delete a class by ID
  *     tags:
  *       - Admin Classes
+ *     security:
+ *       - bearerAuth: []
  *     requestBody:
  *       content:
  *         application/json:
@@ -256,6 +266,8 @@ const { Auth, AdminModel } = require("../../models/models");
  *     summary: Get a list of classes (with optional filters)
  *     tags:
  *       - Admin Classes
+ *     security:
+ *       - bearerAuth: []
  *     requestBody:
  *       content:
  *         application/json:

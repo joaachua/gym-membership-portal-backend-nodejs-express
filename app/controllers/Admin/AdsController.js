@@ -24,6 +24,8 @@ const { Auth, AdminModel } = require("../../models/models");
  *     description: Upload a file to the server. Only PDFs and image files are allowed.
  *     tags:
  *       - Admin Advertisements
+ *     security:
+ *       - bearerAuth: []
  *     requestBody:
  *       content:
  *         multipart/form-data:
@@ -92,6 +94,8 @@ const { Auth, AdminModel } = require("../../models/models");
  *   post:
  *     summary: Create a new advertisement
  *     tags: [Admin Advertisements]
+ *     security:
+ *       - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -115,6 +119,8 @@ const { Auth, AdminModel } = require("../../models/models");
  *   post:
  *     summary: Update an existing advertisement
  *     tags: [Admin Advertisements]
+ *     security:
+ *       - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -134,6 +140,8 @@ const { Auth, AdminModel } = require("../../models/models");
  *   post:
  *     summary: View a specific advertisement by ID
  *     tags: [Admin Advertisements]
+ *     security:
+ *       - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -157,6 +165,8 @@ const { Auth, AdminModel } = require("../../models/models");
  *   post:
  *     summary: Delete an advertisement by ID
  *     tags: [Admin Advertisements]
+ *     security:
+ *       - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -180,6 +190,8 @@ const { Auth, AdminModel } = require("../../models/models");
  *   post:
  *     summary: List advertisements with optional filters
  *     tags: [Admin Advertisements]
+ *     security:
+ *       - bearerAuth: []
  *     requestBody:
  *       required: false
  *       content:

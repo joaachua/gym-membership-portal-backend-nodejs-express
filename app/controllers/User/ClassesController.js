@@ -22,6 +22,8 @@ const { Auth, UserModel } = require("../../models/models");
  *     summary: View class details by ID
  *     tags:
  *       - User Classes
+ *     security:
+ *       - bearerAuth: []
  *     requestBody:
  *       content:
  *         application/json:
@@ -46,6 +48,8 @@ const { Auth, UserModel } = require("../../models/models");
  *     summary: Get a list of classes (with optional filters)
  *     tags:
  *       - User Classes
+ *     security:
+ *       - bearerAuth: []
  *     requestBody:
  *       content:
  *         application/json:

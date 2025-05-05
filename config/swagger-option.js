@@ -5,10 +5,24 @@ const options = {
 	definition: {
 		openapi: "3.0.0",
 		info: {
-			title: "GYM MEBERSHIP PORTAL API DOCUMENTATION",
+			title: "GYM MEMBERSHIP PORTAL API DOCUMENTATION",
 			version: "1.0.0",
 			description: "Demonstrating API documentation",
 		},
+		components: {
+			securitySchemes: {
+				bearerAuth: {
+					type: "http",
+					scheme: "bearer",
+					bearerFormat: "JWT",
+				},
+			},
+		},
+		security: [
+			{
+				bearerAuth: [],
+			},
+		],
 	},
 	apis: ["./app/controllers/**/*.js"],
 };
