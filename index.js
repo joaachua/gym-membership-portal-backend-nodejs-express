@@ -1,5 +1,6 @@
+require("dotenv").config();
 const express = require("express");
-const app = express();
+const http = require("http");
 
 // CORS
 const cors = require("cors");
@@ -11,8 +12,7 @@ const userRoutes = require("./routes/user");
 // Swagger
 const { swaggerUi, specs } = require("./config/swagger-option");
 
-require("dotenv").config();
-
+const app = express();
 app.use(express.json());
 
 app.use(cors());
@@ -22,6 +22,7 @@ app.use("/admin", adminRoutes);
 app.use("/user", userRoutes);
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
+const server = http.createServer(app);
+server.listen(PORT, () => {
 	console.log(`Server is running on port ${PORT}`);
 });
