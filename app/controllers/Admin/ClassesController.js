@@ -293,14 +293,14 @@ exports.uploadFile = [
 	async (req, res) => {
 		const errors = validationResult(req);
 		if (!errors.isEmpty()) {
-			return sendErrorResponse(res, 400, res, 400, "Validation failed", errors.array());
+			return sendErrorResponse(res, 400, "Validation failed", errors.array());
 		}
 
 		try {
 			const file = req.file;
 
 			if (!file) {
-				return sendErrorResponse(res, 400, res, 400, "Validation failed", [
+				return sendErrorResponse(res, 400, "Validation failed", [
 					{ msg: "File is required" },
 				]);
 			}
@@ -319,14 +319,14 @@ exports.uploadFile = [
 				);
 				deleteUploadedFile(filePath);
 
-				return sendErrorResponse(res, 400, res, 400, "Only pdf or image files are allowed");
+				return sendErrorResponse(res, 400, "Only pdf or image files are allowed");
 			}
 
 			const response = [{ file: file.filename }];
 
-			return sendSuccessResponse(res, 200, res, 200, "File processed successfully", response);
+			return sendSuccessResponse(res, 200, "File processed successfully", response);
 		} catch (error) {
-			sendErrorResponse(res, 400, res, 500, "Error processing file", [
+			sendErrorResponse(res, 500, "Error processing file", [
 				error.message || "Internal Server Error",
 			]);
 		}
@@ -337,9 +337,9 @@ exports.storeClass = [
 	async (req, res) => {
 		try {
 			const result = await AdminModel.Classes.createClass(req.body);
-			return sendSuccessResponse(res, 200, res, 200, "Class created successfully", result);
+			return sendSuccessResponse(res, 200, "Class created successfully", result);
 		} catch (error) {
-			return sendErrorResponse(res, 400, res, 500, error.message);
+			return sendErrorResponse(res, 500, error.message);
 		}
 	},
 ];
@@ -359,7 +359,7 @@ exports.updateClass = [
 		} = req.body;
 
 		if (!id) {
-			return sendErrorResponse(res, 400, res, 400, "Class ID is required");
+			return sendErrorResponse(res, 400, "Class ID is required");
 		}
 
 		const updateData = {
@@ -374,7 +374,7 @@ exports.updateClass = [
 		};
 
 		const result = await AdminModel.Classes.editClass(id, updateData);
-		return sendSuccessResponse(res, 200, res, 200, "Class updated successfully", result);
+		return sendSuccessResponse(res, 200, "Class updated successfully", result);
 	},
 ];
 
@@ -383,21 +383,21 @@ exports.viewClass = [
 		const { id } = req.body;
 
 		if (!id) {
-			return sendErrorResponse(res, 400, res, 400, "Class ID is required");
+			return sendErrorResponse(res, 400, "Class ID is required");
 		}
 
 		try {
 			const singleClass = await AdminModel.Classes.findClassById(id);
 
 			if (!singleClass) {
-				return sendErrorResponse(res, 400, res, 400, "Class not found");
+				return sendErrorResponse(res, 400, "Class not found");
 			}
 
             singleClass.featured_img = getUrl(singleClass.featured_img, "image");
 
-			return sendSuccessResponse(res, 200, res, 200, "Class retrieved successfully", singleClass);
+			return sendSuccessResponse(res, 200, "Class retrieved successfully", singleClass);
 		} catch (error) {
-			return sendErrorResponse(res, 400, res, 500, "Error retrieving class", error.message);
+			return sendErrorResponse(res, 500, "Error retrieving class", error.message);
 		}
 	},
 ];
@@ -407,19 +407,19 @@ exports.deleteClass = [
 		const { id } = req.body;
 
 		if (!id) {
-			return sendErrorResponse(res, 400, res, 400, "Class ID is required");
+			return sendErrorResponse(res, 400, "Class ID is required");
 		}
 
 		try {
 			const singleClass = await AdminModel.Classes.deleteClassById(id);
 
 			if (!singleClass) {
-				return sendErrorResponse(res, 400, res, 400, "Class not found");
+				return sendErrorResponse(res, 400, "Class not found");
 			}
 
-			return sendSuccessResponse(res, 200, res, 200, "Class deleted successfully", singleClass);
+			return sendSuccessResponse(res, 200, "Class deleted successfully", singleClass);
 		} catch (error) {
-			return sendErrorResponse(res, 400, res, 500, "Error deleting class", error.message);
+			return sendErrorResponse(res, 500, "Error deleting class", error.message);
 		}
 	},
 ];
@@ -429,9 +429,9 @@ exports.classList = [
 		try {
 			const classes = await AdminModel.Classes.listClasses(req.body);
 
-			return sendSuccessResponse(res, 200, res, 200, "Classes retrieved successfully", classes);
+			return sendSuccessResponse(res, 200, "Classes retrieved successfully", classes);
 		} catch (error) {
-			return sendErrorResponse(res, 400, res, 500, "Failed to retrieve classes", [
+			return sendErrorResponse(res, 500, "Failed to retrieve classes", [
 				error.message || "Internal Server Error",
 			]);
 		}

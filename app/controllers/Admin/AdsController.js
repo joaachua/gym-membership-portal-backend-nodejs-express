@@ -224,14 +224,14 @@ exports.uploadFile = [
 	async (req, res) => {
 		const errors = validationResult(req);
 		if (!errors.isEmpty()) {
-			return sendErrorResponse(res, 400, res, 400, "Validation failed", errors.array());
+			return sendErrorResponse(res, 400, "Validation failed", errors.array());
 		}
 
 		try {
 			const file = req.file;
 
 			if (!file) {
-				return sendErrorResponse(res, 400, res, 400, "Validation failed", [
+				return sendErrorResponse(res, 400, "Validation failed", [
 					{ 
 						msg: "File is required" 
 					},
@@ -252,14 +252,14 @@ exports.uploadFile = [
 				);
 				deleteUploadedFile(filePath);
 
-				return sendErrorResponse(res, 400, res, 400, "Only pdf or image files are allowed");
+				return sendErrorResponse(res, 400, "Only pdf or image files are allowed");
 			}
 
 			const response = [{ file: file.filename }];
 
 			return sendSuccessResponse(res, 200, res, 500, "File processed successfully", response);
 		} catch (error) {
-			sendErrorResponse(res, 400, res, 500, "Error processing file", [
+			sendErrorResponse(res, 500, "Error processing file", [
 				error.message || "Internal Server Error",
 			]);
 		}
@@ -270,9 +270,9 @@ exports.storeAds = [
 	async (req, res) => {
 		try {
 			const result = await AdminModel.Ads.createAdvertisement(req.body);
-			return sendSuccessResponse(res, 200, res, 200, "Advertisement created successfully", result);
+			return sendSuccessResponse(res, 200, "Advertisement created successfully", result);
 		} catch (error) {
-			return sendErrorResponse(res, 400, res, 500, "Internal server error: ", error.message);
+			return sendErrorResponse(res, 500, "Internal server error: ", error.message);
 		}
 	},
 ];
@@ -291,7 +291,7 @@ exports.updateAds = [
 		} = req.body;
 
 		if (!id) {
-			return sendErrorResponse(res, 400, res, 400, "Advertisement ID is required");
+			return sendErrorResponse(res, 400, "Advertisement ID is required");
 		}
 
 		const updateData = {
@@ -305,7 +305,7 @@ exports.updateAds = [
 		};
 
 		const result = await AdminModel.Ads.editAdvertisement(id, updateData);
-		return sendSuccessResponse(res, 200, res, 200, "Ad updated successfully", result);
+		return sendSuccessResponse(res, 200, "Ad updated successfully", result);
 	},
 ];
 
@@ -314,21 +314,21 @@ exports.viewAds = [
 		const { id } = req.body;
 
 		if (!id) {
-			return sendErrorResponse(res, 400, res, 400, "Advertisement ID is required");
+			return sendErrorResponse(res, 400, "Advertisement ID is required");
 		}
 
 		try {
 			const ad = await AdminModel.Ads.findAdvertisementById(id);
 
 			if (!ad) {
-				return sendErrorResponse(res, 400, res, 400, "Advertisement not found");
+				return sendErrorResponse(res, 400, "Advertisement not found");
 			}
 
             ad.image = getUrl(ad.image, "image");
 
-			return sendSuccessResponse(res, 200, res, 200, "Ad retrieved successfully", ad);
+			return sendSuccessResponse(res, 200, "Ad retrieved successfully", ad);
 		} catch (error) {
-			return sendErrorResponse(res, 400, res, 500, "Error retrieving advertisement", error.message);
+			return sendErrorResponse(res, 500, "Error retrieving advertisement", error.message);
 		}
 	},
 ];
@@ -338,19 +338,19 @@ exports.deleteAds = [
 		const { id } = req.body;
 
 		if (!id) {
-			return sendErrorResponse(res, 400, res, 400, "Advertisement ID is required");
+			return sendErrorResponse(res, 400, "Advertisement ID is required");
 		}
 
 		try {
 			const ad = await AdminModel.Ads.deleteAdvertisementById(id);
 
 			if (!ad) {
-				return sendErrorResponse(res, 400, res, 400, "Advertisement not found");
+				return sendErrorResponse(res, 400, "Advertisement not found");
 			}
 
-			return sendSuccessResponse(res, 200, res, 200, "Ad deleted successfully", ad);
+			return sendSuccessResponse(res, 200, "Ad deleted successfully", ad);
 		} catch (error) {
-			return sendErrorResponse(res, 400, res, 500, "Error deleting advertisement", error.message);
+			return sendErrorResponse(res, 500, "Error deleting advertisement", error.message);
 		}
 	},
 ];
@@ -360,9 +360,9 @@ exports.adsList = [
 		try {
 			const ads = await AdminModel.Ads.listAdvertisements(req.body);
 
-			return sendSuccessResponse(res, 200, res, 200, "Advertisements retrieved successfully", ads);
+			return sendSuccessResponse(res, 200, "Advertisements retrieved successfully", ads);
 		} catch (error) {
-			return sendErrorResponse(res, 400, res, 500, "Failed to retrieve advertisements", [
+			return sendErrorResponse(res, 500, "Failed to retrieve advertisements", [
 				error.message || "Internal Server Error",
 			]);
 		}

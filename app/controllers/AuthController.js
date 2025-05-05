@@ -23,6 +23,7 @@ const { body, validationResult } = require("express-validator");
  *   post:
  *     summary: Admin login
  *     tags: [Admin Auth]
+ *     security: []
  *     requestBody:
  *       required: true
  *       content:
@@ -101,6 +102,7 @@ const { body, validationResult } = require("express-validator");
  *   post:
  *     summary: Request password reset
  *     tags: [Admin Auth]
+ *     security: []
  *     requestBody:
  *       required: true
  *       content:
@@ -130,6 +132,7 @@ const { body, validationResult } = require("express-validator");
  *   post:
  *     summary: Reset password
  *     tags: [Admin Auth]
+ *     security: []
  *     requestBody:
  *       required: true
  *       content:
@@ -292,6 +295,7 @@ const { body, validationResult } = require("express-validator");
  *   post:
  *     summary: Register a new user
  *     tags: [User Auth]
+ *     security: []
  *     requestBody:
  *       required: true
  *       content:
@@ -353,6 +357,7 @@ const { body, validationResult } = require("express-validator");
  *   post:
  *     summary: Login and receive a token
  *     tags: [User Auth]
+ *     security: []
  *     requestBody:
  *       required: true
  *       content:
@@ -384,6 +389,7 @@ const { body, validationResult } = require("express-validator");
  *   post:
  *     summary: Verify OTP and receive a token
  *     tags: [User Auth]
+ *     security: []
  *     requestBody:
  *       required: true
  *       content:
@@ -426,6 +432,7 @@ const { body, validationResult } = require("express-validator");
  *   post:
  *     summary: Resend OTP to the user
  *     tags: [User Auth]
+ *     security: []
  *     requestBody:
  *       required: true
  *       content:
@@ -473,6 +480,7 @@ const { body, validationResult } = require("express-validator");
  *   post:
  *     summary: Request a password reset
  *     tags: [User Auth]
+ *     security: []
  *     requestBody:
  *       required: true
  *       content:
@@ -509,6 +517,7 @@ const { body, validationResult } = require("express-validator");
  *   post:
  *     summary: Verify OTP for password reset and generate a reset token
  *     tags: [User Auth]
+ *     security: []
  *     requestBody:
  *       required: true
  *       content:
@@ -555,6 +564,7 @@ const { body, validationResult } = require("express-validator");
  *   post:
  *     summary: Reset the user password
  *     tags: [User Auth]
+ *     security: []
  *     requestBody:
  *       required: true
  *       content:

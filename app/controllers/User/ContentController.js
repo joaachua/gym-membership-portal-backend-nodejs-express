@@ -11,19 +11,19 @@ exports.viewContent = [
 		const { id } = req.body;
 
 		if (!id) {
-			return sendErrorResponse(res, 400, res, 400, "Content ID is required");
+			return sendErrorResponse(res, 400, "Content ID is required");
 		}
 
 		try {
 			const content = await UserModel.Content.findContentById(id);
 
 			if (!content) {
-				return sendErrorResponse(res, 400, res, 400, "Content not found");
+				return sendErrorResponse(res, 400, "Content not found");
 			}
 
-			return sendSuccessResponse(res, 200, res, 200, "Content retrieved successfully", content);
+			return sendSuccessResponse(res, 200, "Content retrieved successfully", content);
 		} catch (error) {
-			return sendErrorResponse(res, 400, res, 500, "Error retrieving content", error.message);
+			return sendErrorResponse(res, 500, "Error retrieving content", error.message);
 		}
 	},
 ];

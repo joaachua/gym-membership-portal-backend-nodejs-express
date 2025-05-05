@@ -76,21 +76,21 @@ exports.viewClass = [
 		const { id } = req.body;
 
 		if (!id) {
-			return sendErrorResponse(res, 400, res, 400, "Class ID is required");
+			return sendErrorResponse(res, 400, "Class ID is required");
 		}
 
 		try {
 			const singleClass = await UserModel.Classes.findClassById(id);
 
 			if (!singleClass) {
-				return sendErrorResponse(res, 400, res, 400, "Class not found");
+				return sendErrorResponse(res, 400, "Class not found");
 			}
 
             singleClass.featured_img = getUrl(singleClass.featured_img, "image");
 
-			return sendSuccessResponse(res, 200, res, 200, "Class retrieved successfully", singleClass);
+			return sendSuccessResponse(res, 200, "Class retrieved successfully", singleClass);
 		} catch (error) {
-			return sendErrorResponse(res, 400, res, 500, "Error retrieving class", error.message);
+			return sendErrorResponse(res, 500, "Error retrieving class", error.message);
 		}
 	},
 ];
@@ -100,9 +100,9 @@ exports.classList = [
 		try {
 			const classes = await UserModel.Classes.listClasses(req.body);
 
-			return sendSuccessResponse(res, 200, res, 200, "Classes retrieved successfully", classes);
+			return sendSuccessResponse(res, 200, "Classes retrieved successfully", classes);
 		} catch (error) {
-			return sendErrorResponse(res, 400, res, 500, "Failed to retrieve classes", [
+			return sendErrorResponse(res, 500, "Failed to retrieve classes", [
 				error.message || "Internal Server Error",
 			]);
 		}
