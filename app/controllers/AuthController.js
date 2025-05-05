@@ -1358,6 +1358,9 @@ exports.loginUser = [
 				user.password
 			);
 
+            console.log("Entered password:", req.body.password);
+            console.log("Stored hash:", user.password);
+
 			if (!passwordMatch) {
 				return sendErrorResponse(res, 400, "Invalid password.");
 			}
