@@ -12,7 +12,7 @@ router.post('/verify-otp', AuthController.verifyOTP);
 router.post('/resend-otp', AuthController.resendOtp);
 router.post('/forgot-password', AuthController.forgotPassword);
 router.post('/verify-reset-otp', AuthController.verifyResetOtp);
-router.post('/reset-password', AuthController.resetPassword);
+router.post('/reset-password', AuthController.userResetPassword);
 
 router.use(verifyToken);
 router.post('/logout', AuthController.logout);

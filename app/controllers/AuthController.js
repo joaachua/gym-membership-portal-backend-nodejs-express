@@ -1658,7 +1658,7 @@ exports.verifyResetOtp = [
 ];
 
 // Reset Password
-exports.resetPassword = [
+exports.userResetPassword = [
 	body("token").notEmpty().withMessage("Token is required"),
 
 	body("password")
