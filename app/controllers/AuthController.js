@@ -63,9 +63,6 @@ const { body, validationResult } = require("express-validator");
  *                 phone_number:
  *                   type: string
  *                   example: "1234567890"
- *                 nric:
- *                   type: string
- *                   example: S1234567D
  *                 platform:
  *                   type: integer
  *                   example: 2
@@ -345,9 +342,6 @@ const { body, validationResult } = require("express-validator");
  *                 phone_number:
  *                   type: string
  *                   example: +1234567890
- *                 nric:
- *                   type: string
- *                   example: S1234567A
  *       400:
  *         description: Validation failed or user already exists
  *       500:
@@ -836,7 +830,6 @@ exports.loginAdmin = [
 				full_name: admin.full_name,
 				email: admin.email,
 				phone_number: admin.phone_number,
-				nric: admin.nric,
 				platform: admin.platform,
 				permissions,
 			});
