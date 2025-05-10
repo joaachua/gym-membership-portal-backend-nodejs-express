@@ -272,7 +272,7 @@ exports.logWorkout = async (req, res) => {
 			return sendErrorResponse(res, 400, "Missing required fields");
 		}
 
-		const calories = await Workout.calculateCalories(
+		const calories = await Workout.calculateCaloriesBurned(
 			exercise,
 			duration,
 			weightKg
