@@ -5,6 +5,7 @@ const { verifyToken } = require('../config/auth');
 const AuthController = require('../app/controllers/AuthController');
 const AdsController = require('../app/controllers/User/AdsController');
 const ClassController = require('../app/controllers/User/ClassesController');
+const WorkoutController = require('../app/controllers/User/WorkoutController');
 
 router.post('/register', AuthController.registerUser);
 router.post('/login', AuthController.loginUser);
@@ -13,6 +14,9 @@ router.post('/resend-otp', AuthController.resendOtp);
 router.post('/forgot-password', AuthController.forgotPassword);
 router.post('/verify-reset-otp', AuthController.verifyResetOtp);
 router.post('/reset-password', AuthController.userResetPassword);
+router.post('/recommend-workout', WorkoutController.recommendWorkout);
+router.post('/estimate-calorie', WorkoutController.estimateCalories);
+router.post('/workout-log', WorkoutController.logWorkout);
 
 router.use(verifyToken);
 router.post('/logout', AuthController.logout);
