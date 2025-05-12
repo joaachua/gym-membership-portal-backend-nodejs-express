@@ -1,5 +1,6 @@
 const knex = require("../../../config/db");
-const { spawn } = require("child_process");
+const { exec, spawn } = require("child_process");
+
 const path = require("path");
 const MET_VALUES = {
 	"push-ups": 8,
