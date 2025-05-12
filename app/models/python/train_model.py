@@ -54,8 +54,8 @@ model = DecisionTreeClassifier()
 model.fit(X, y)
 
 # Save model and encoders
-joblib.dump(model, "app/Models/User/workout_model.pkl")
-joblib.dump(goal_enc, "app/Models/User/goal_encoder.pkl")
-joblib.dump(level_enc, "app/Models/User/level_encoder.pkl")
-joblib.dump(equip_enc, "app/Models/User/equip_encoder.pkl")
-joblib.dump(workout_enc, "app/Models/User/workout_encoder.pkl")
+joblib.dump(model, "app/models/User/workout_model.pkl")
+joblib.dump(goal_enc, "app/models/User/goal_encoder.pkl")
+joblib.dump(level_enc, "app/models/User/level_encoder.pkl")
+joblib.dump(equip_enc, "app/models/User/equip_encoder.pkl")
+joblib.dump(workout_enc, "app/models/User/workout_encoder.pkl")

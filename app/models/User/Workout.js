@@ -1,7 +1,7 @@
 const knex = require("../../../config/db");
 const { exec, spawn } = require("child_process");
-
 const path = require("path");
+
 const MET_VALUES = {
 	"push-ups": 8,
 	squats: 5,
@@ -99,15 +99,20 @@ const Workout = {
 
 			exec(`python3 ${pythonScript} '${input}'`, (err, stdout, stderr) => {
 				if (err) {
-					console.error("Python error:", stderr);
+					console.error("Exec error:", err.message);
+					console.error("Python stderr:", stderr);
 					return reject("Error executing Python script");
 				}
 
 				try {
-					const result = JSON.parse(stdout);
+					// Clean stdout to extract only JSON
+					const jsonOutput = stdout.trim().split("\n").pop(); // in case of extra prints
+					const result = JSON.parse(jsonOutput);
 					if (result.error) return reject(result.error);
 					resolve(result);
 				} catch (e) {
+					console.error("Failed to parse JSON:", e.message);
+					console.error("Raw stdout:", stdout);
 					reject("Invalid JSON output from Python");
 				}
 			});
