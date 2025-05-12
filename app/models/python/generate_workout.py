@@ -8,6 +8,7 @@ model = joblib.load("app/models/python/workout_model.pkl")
 goal_enc = joblib.load("app/models/python/goal_encoder.pkl")
 level_enc = joblib.load("app/models/python/level_encoder.pkl")
 equip_enc = joblib.load("app/models/python/equip_encoder.pkl")
+workout_enc = joblib.load("app/models/python/workout_encoder.pkl")
 
 # Read input
 input_data = json.loads(sys.argv[1])
@@ -30,10 +31,10 @@ input_df = pd.DataFrame([{
 
 # Make prediction
 predicted_workout_enc = model.predict(input_df)
-workout_enc = predicted_workout_enc[0]
+workout_enc_val = predicted_workout_enc[0]
 
 # Decode the prediction
-workout = workout_enc.inverse_transform([workout_enc])[0]
+workout = workout_enc.inverse_transform([workout_enc_val])[0]  # Use the encoder to inverse transform the encoded value
 
 # Output result
 result = {
