@@ -91,7 +91,11 @@ const Workout = {
 		return new Promise((resolve, reject) => {
 			const data = JSON.stringify({ goal });
 
-			const python = spawn("python3", ["generate_workout.py", data]);
+			const scriptPath = path.join(
+				__dirname,
+				'../../app/models/User/generate_workout.py'
+			);
+			const python = spawn("python3", [scriptPath, data]);
 
 			let output = "";
 			python.stdout.on("data", (data) => {
