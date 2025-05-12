@@ -94,7 +94,7 @@ const Workout = {
 
 			const scriptPath = path.join(
 				__dirname,
-				'../../app/models/User/generate_workout.py'
+				'../../models/User/generate_workout.py'
 			);
 			const python = spawn("python3", [scriptPath, data]);
 
