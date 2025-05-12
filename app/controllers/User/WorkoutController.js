@@ -360,21 +360,18 @@ exports.logWorkout = async (req, res) => {
 exports.generateWorkout = [
 	async (req, res) => {
 		try {
-			const { goal } =
-				req.body;
+			const { goal, level, equipment } = req.body;
 
 			// Validate input (optional: add more robust checks here)
 			if (
-				goal === undefined
+				goal === undefined,
+				level === undefined,
+				equipment === undefined
 			) {
 				return sendErrorResponse(res, 400, "Missing required fields");
 			}
 
-			const userInput = {
-				goal: req.body.goal,
-			};
-
-			const workout = await Workout.generateWorkout(userInput);
+			const workout = await Workout.generateWorkout(goal, level, equipment);
 
 			return sendSuccessResponse(
 				res,

@@ -1,5 +1,5 @@
 const knex = require("../../../config/db");
-const { spawn } = require('child_process');
+const { spawn } = require("child_process");
 const path = require("path");
 const MET_VALUES = {
 	"push-ups": 8,
@@ -88,31 +88,26 @@ const Workout = {
 		return { id, ...insertData };
 	},
 
-	generateWorkout: async (goal) => {
+	generateWorkout: async (goal, level, equipment) => {
 		return new Promise((resolve, reject) => {
-			const data = JSON.stringify({ goal });
-
-			const scriptPath = path.join(
+			const input = JSON.stringify({ goal, level, equipment });
+			const pythonScript = path.join(
 				__dirname,
-				'../../models/User/generate_workout.py'
+				"../../models/User/generate_workout.py"
 			);
-			const python = spawn("python3", [scriptPath, data]);
 
-			let output = "";
-			python.stdout.on("data", (data) => {
-				output += data.toString();
-			});
+			exec(`python3 ${pythonScript} '${input}'`, (err, stdout, stderr) => {
+				if (err) {
+					console.error("Python error:", stderr);
+					return reject("Error executing Python script");
+				}
 
-			python.stderr.on("data", (data) => {
-				console.error(`Python error: ${data}`);
-			});
-
-			python.on("close", () => {
 				try {
-					const result = JSON.parse(output);
+					const result = JSON.parse(stdout);
+					if (result.error) return reject(result.error);
 					resolve(result);
-				} catch (err) {
-					reject(err);
+				} catch (e) {
+					reject("Invalid JSON output from Python");
 				}
 			});
 		});
