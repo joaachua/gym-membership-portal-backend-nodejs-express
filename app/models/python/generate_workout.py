@@ -1,24 +1,43 @@
 import sys
 import json
 import joblib
+import pandas as pd
 
 # Load model and encoders
 model = joblib.load("app/models/python/workout_model.pkl")
 goal_enc = joblib.load("app/models/python/goal_encoder.pkl")
 level_enc = joblib.load("app/models/python/level_encoder.pkl")
 equip_enc = joblib.load("app/models/python/equip_encoder.pkl")
-workout_enc = joblib.load("app/models/python/workout_encoder.pkl")
 
-if __name__ == "__main__":
-    try:
-        data = json.loads(sys.argv[1])
-        goal = goal_enc.transform([data["goal"]])[0]
-        level = level_enc.transform([data["level"]])[0]
-        equip = equip_enc.transform([data["equipment"]])[0]
+# Read input
+input_data = json.loads(sys.argv[1])
 
-        pred = model.predict([[goal, level, equip]])[0]
-        workout = workout_enc.inverse_transform([pred])[0]
+goal = input_data["goal"]
+level = input_data["level"]
+equipment = input_data["equipment"]
 
-        print(json.dumps({"workout": workout}))
-    except Exception as e:
-        print(json.dumps({"error": str(e)}))
+# Encode input
+goal_enc_val = goal_enc.transform([goal])[0]
+level_enc_val = level_enc.transform([level])[0]
+equip_enc_val = equip_enc.transform([equipment])[0]
+
+# Prepare input for prediction
+input_df = pd.DataFrame([{
+    "goal_enc": goal_enc_val,
+    "level_enc": level_enc_val,
+    "equip_enc": equip_enc_val
+}])
+
+# Make prediction
+predicted_workout_enc = model.predict(input_df)
+workout_enc = predicted_workout_enc[0]
+
+# Decode the prediction
+workout = workout_enc.inverse_transform([workout_enc])[0]
+
+# Output result
+result = {
+    "workout": workout
+}
+
+print(json.dumps(result))
