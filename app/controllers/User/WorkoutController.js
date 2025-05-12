@@ -193,6 +193,62 @@ const Workout = require("../../models/User/Workout");
  *                       type: number
  */
 
+/**
+ * @swagger
+ * /user/generate-workout:
+ *   post:
+ *     summary: Recommend a workout based on user input
+ *     tags: [Workout]
+ *     security: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - goal
+ *             properties:
+ *               goal:
+ *                 type: string
+ *                 description: 0 = Fat loss, 1 = Muscle gain, 2 = Endurance
+ *                 example: 1
+ *     responses:
+ *       200:
+ *         description: Recommended workout
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 status_code:
+ *                   type: integer
+ *                   example: 200
+ *                 message:
+ *                   type: string
+ *                   example: Workout recommendation generated successfully
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     workout:
+ *                       type: array
+ *                       items:
+ *                         type: string
+ *                       example: [
+ *                         "Bodyweight exercises (Push-ups, Squats, Planks)",
+ *                         "Focus on bodyweight exercises",
+ *                         "Try to aim for 3-4 workout sessions per week",
+ *                         "With equipment, you can try more weight training exercises"
+ *                       ]
+ *       400:
+ *         description: Missing or invalid input
+ *       500:
+ *         description: Server error
+ */
+
 exports.recommendWorkout = [
 	async (req, res) => {
 		try {
@@ -300,3 +356,35 @@ exports.logWorkout = async (req, res) => {
 		return sendErrorResponse(res, 500, "Server error");
 	}
 };
+
+exports.generateWorkout = [
+	async (req, res) => {
+		try {
+			const { goal } =
+				req.body;
+
+			// Validate input (optional: add more robust checks here)
+			if (
+				goal === undefined
+			) {
+				return sendErrorResponse(res, 400, "Missing required fields");
+			}
+
+			const userInput = {
+				goal: req.body.goal,
+			};
+
+			const workout = await Workout.generateWorkout(userInput);
+
+			return sendSuccessResponse(
+				res,
+				200,
+				"Workout recommendation generated successfully",
+				workout
+			);
+		} catch (error) {
+			console.error(error);
+			return sendErrorResponse(res, 500, "Server error", [error.message]);
+		}
+	},
+];
