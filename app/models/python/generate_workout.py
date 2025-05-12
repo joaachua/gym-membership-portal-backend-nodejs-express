@@ -29,16 +29,21 @@ input_df = pd.DataFrame([{
     "equip_enc": equip_enc_val
 }])
 
-# Make prediction
-predicted_workout_enc = model.predict(input_df)
-workout_enc_val = predicted_workout_enc[0]
+# Get top-N predicted workouts based on probability
+N = 5
 
-# Decode the prediction
-workout = workout_enc.inverse_transform([workout_enc_val])[0]  # Use the encoder to inverse transform the encoded value
+# Predict probabilities
+probs = model.predict_proba(input_df)[0]
 
-# Output result
+# Get indices of top-N workouts
+top_n_indices = probs.argsort()[-N:][::-1]
+
+# Decode workout names
+top_n_workouts = workout_enc.inverse_transform(top_n_indices)
+
+# Output the result
 result = {
-    "workout": workout
+    "workouts": list(top_n_workouts)
 }
 
 print(json.dumps(result))
