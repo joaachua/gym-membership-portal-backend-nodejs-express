@@ -3,11 +3,11 @@ import json
 import joblib
 
 # Load model and encoders
-model = joblib.load("app/Models/User/workout_model.pkl")
-goal_enc = joblib.load("app/Models/User/goal_encoder.pkl")
-level_enc = joblib.load("app/Models/User/level_encoder.pkl")
-equip_enc = joblib.load("app/Models/User/equip_encoder.pkl")
-workout_enc = joblib.load("app/Models/User/workout_encoder.pkl")
+model = joblib.load("app/models/python/workout_model.pkl")
+goal_enc = joblib.load("app/models/python/goal_encoder.pkl")
+level_enc = joblib.load("app/models/python/level_encoder.pkl")
+equip_enc = joblib.load("app/models/python/equip_encoder.pkl")
+workout_enc = joblib.load("app/models/python/workout_encoder.pkl")
 
 if __name__ == "__main__":
     try:
