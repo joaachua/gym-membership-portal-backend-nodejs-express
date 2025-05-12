@@ -94,7 +94,7 @@ const Workout = {
 			const input = JSON.stringify({ goal, level, equipment });
 			const pythonScript = path.join(
 				__dirname,
-				"../../models/python/generate_workout.py"
+				"../python/generate_workout.py"
 			);
 
 			exec(`python3 ${pythonScript} '${input}'`, (err, stdout, stderr) => {
