@@ -1,5 +1,7 @@
 const knex = require("../../../config/db");
-const { exec, spawn } = require("child_process");
+const { exec } = require("child_process");
+const util = require("util");
+const execPromise = util.promisify(exec);
 const path = require("path");
 
 const MET_VALUES = {
@@ -90,33 +92,32 @@ const Workout = {
 	},
 
 	generateWorkout: async (goal, level, equipment) => {
-		return new Promise((resolve, reject) => {
+		try {
 			const input = JSON.stringify({ goal, level, equipment });
 			const pythonScript = path.join(
 				__dirname,
 				"../python/generate_workout.py"
 			);
 
-			exec(`python3 ${pythonScript} '${input}'`, (err, stdout, stderr) => {
-				if (err) {
-					console.error("Exec error:", err.message);
-					console.error("Python stderr:", stderr);
-					return reject("Error executing Python script");
-				}
+			const { stdout, stderr } = await execPromise(
+				`python3 ${pythonScript} '${input}'`
+			);
 
-				try {
-					// Clean stdout to extract only JSON
-					const jsonOutput = stdout.trim().split("\n").pop(); // in case of extra prints
-					const result = JSON.parse(jsonOutput);
-					if (result.error) return reject(result.error);
-					resolve(result);
-				} catch (e) {
-					console.error("Failed to parse JSON:", e.message);
-					console.error("Raw stdout:", stdout);
-					reject("Invalid JSON output from Python");
-				}
-			});
-		});
+			if (stderr) {
+				console.error("Python stderr:", stderr);
+				throw new Error("Error executing Python script");
+			}
+
+			// Clean stdout and parse the JSON result
+			const jsonOutput = stdout.trim().split("\n").pop(); // last line of output
+			const result = JSON.parse(jsonOutput);
+			if (result.error) throw new Error(result.error);
+
+			return result;
+		} catch (e) {
+			console.error("Error:", e.message);
+			throw new Error("Failed to execute Python script or parse output");
+		}
 	},
 };
 
