@@ -4,6 +4,7 @@ const {
 	sendErrorResponse,
 } = require("../../../services/helper");
 
+const { installDependencies } = require('../../models/python/install_python_deps');
 const Workout = require("../../models/User/Workout");
 
 /**
@@ -360,6 +361,9 @@ exports.logWorkout = async (req, res) => {
 exports.generateWorkout = [
 	async (req, res) => {
 		try {
+			const result = await installDependencies();
+			console.log('Python dependencies installed:', result);
+
 			const { goal, level, equipment } = req.body;
 
 			// Validate input (optional: add more robust checks here)
