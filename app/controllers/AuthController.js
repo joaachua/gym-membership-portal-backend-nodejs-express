@@ -1264,6 +1264,7 @@ exports.registerUser = [
 			const newUserId = await Auth.registerUser({
 				salutation: req.body.salutation,
 				email: req.body.email,
+				username: req.body.username,
 				full_name: req.body.full_name,
 				phone_number: req.body.phone_number,
 				password: hashedPassword,

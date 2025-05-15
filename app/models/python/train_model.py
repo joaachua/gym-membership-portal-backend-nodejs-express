@@ -13,6 +13,10 @@ data = [
     {"goal": "strength", "level": "intermediate", "equipment": "full", "workout": "Barbell Squats"},
     {"goal": "strength", "level": "advanced", "equipment": "basic", "workout": "Dumbbell Bench Press"},
     {"goal": "strength", "level": "advanced", "equipment": "full", "workout": "Deadlifts"},
+    {"goal": "strength", "level": "beginner", "equipment": "none", "workout": "Push-Ups"},
+    {"goal": "strength", "level": "beginner", "equipment": "full", "workout": "Machine Chest Press"},
+    {"goal": "strength", "level": "intermediate", "equipment": "none", "workout": "Tricep Dips"},
+    {"goal": "strength", "level": "advanced", "equipment": "none", "workout": "Muscle-Ups"},
 
     {"goal": "cardio", "level": "beginner", "equipment": "none", "workout": "Jumping Jacks"},
     {"goal": "cardio", "level": "beginner", "equipment": "basic", "workout": "Step Aerobics"},
@@ -21,10 +25,15 @@ data = [
     {"goal": "cardio", "level": "intermediate", "equipment": "full", "workout": "Treadmill Running"},
     {"goal": "cardio", "level": "advanced", "equipment": "basic", "workout": "Jump Rope Intervals"},
     {"goal": "cardio", "level": "advanced", "equipment": "full", "workout": "HIIT on Treadmill"},
+    {"goal": "cardio", "level": "beginner", "equipment": "none", "workout": "Burpees"},
+    {"goal": "cardio", "level": "intermediate", "equipment": "full", "workout": "Cycling"},
+    {"goal": "cardio", "level": "advanced", "equipment": "none", "workout": "Sprints"},
 
     {"goal": "flexibility", "level": "beginner", "equipment": "none", "workout": "Seated Forward Bend"},
     {"goal": "flexibility", "level": "intermediate", "equipment": "none", "workout": "Standing Hamstring Stretch"},
     {"goal": "flexibility", "level": "advanced", "equipment": "none", "workout": "Yoga Flow Sequence"},
+    {"goal": "flexibility", "level": "beginner", "equipment": "none", "workout": "Cat-Cow Stretch"},
+    {"goal": "flexibility", "level": "advanced", "equipment": "none", "workout": "Overhead Shoulder Stretch"},
 
     {"goal": "general", "level": "beginner", "equipment": "none", "workout": "Plank Holds"},
     {"goal": "general", "level": "beginner", "equipment": "basic", "workout": "Kettlebell Swings"},
