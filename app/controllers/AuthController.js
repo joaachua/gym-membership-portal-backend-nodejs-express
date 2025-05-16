@@ -903,7 +903,7 @@ exports.loginAdmin = [
 ];
 
 // Forgot password
-exports.forgotPassword = [
+/*exports.forgotPassword = [
 	body("email").isEmail().withMessage("Email must be a valid email address"),
 
 	async (req, res) => {
@@ -957,7 +957,7 @@ exports.forgotPassword = [
 			);
 		}
 	},
-];
+];*/
 
 // Reset password
 exports.resetPassword = [
