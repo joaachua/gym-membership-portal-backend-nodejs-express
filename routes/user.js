@@ -20,6 +20,7 @@ router.post('/workout-log', WorkoutController.logWorkout);
 router.post('/generate-workout', WorkoutController.generateWorkout);
 
 router.use(verifyToken);
+router.post('/profile', AuthController.getProfile);
 router.post('/logout', AuthController.logout);
 
 router.post("/ads/list", AdsController.adsList);

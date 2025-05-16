@@ -739,6 +739,46 @@ const { body, validationResult } = require("express-validator");
 
 /**
  * @swagger
+ * /user/profile:
+ *   post:
+ *     summary: View User Profile
+ *     tags: [User Auth]
+ *     responses:
+ *       200:
+ *         description: User retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: integer
+ *                   example: 73
+ *                 username:
+ *                   type: string
+ *                   example: User
+ *                 full_name:
+ *                   type: string
+ *                   example: User
+ *                 role:
+ *                   type: string
+ *                   example: User
+ *                 email:
+ *                   type: string
+ *                   example: user@example.com
+ *                 phone_number:
+ *                   type: string
+ *                   example: "1234567890"
+ *       400:
+ *         description: Validation failed
+ *       404:
+ *         description: User not found
+ *       500:
+ *         description: Error retreiving user
+ */
+
+/**
+ * @swagger
  * /user/logout:
  *   post:
  *     summary: Logout the user
@@ -1807,6 +1847,24 @@ exports.checkPasscode = [
 		} catch (error) {
 			return sendErrorResponse(res, 400, "Error fetching user profile", [
 				error.message,
+			]);
+		}
+	},
+];
+
+// View user profile
+exports.getProfile = [
+	async (req, res) => {
+		const id = req.user.user_id;
+		try {
+			const user = await Auth.findUserById(id);
+			if (!user) {
+				return sendErrorResponse(res, 400, "User not found");
+			}
+			sendSuccessResponse(res, 200, "User retrieved successfully", user);
+		} catch (error) {
+			sendErrorResponse(res, 400, "Error retrieving user", [
+				error.message || "Internal Server Error",
 			]);
 		}
 	},
