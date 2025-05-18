@@ -11,7 +11,6 @@ const Workout = require("../../models/User/Workout");
  *   post:
  *     summary: Recommend a workout based on user input
  *     tags: [Workout]
- *     security: []
  *     requestBody:
  *       required: true
  *       content:
@@ -85,7 +84,6 @@ const Workout = require("../../models/User/Workout");
  *   post:
  *     summary: Estimate calories burned for an exercise
  *     tags: [Calories]
- *     security: []
  *     requestBody:
  *       required: true
  *       content:
@@ -148,7 +146,6 @@ const Workout = require("../../models/User/Workout");
  *   post:
  *     summary: Log a user's workout and calculate calories
  *     tags: [Workout]
- *     security: []
  *     requestBody:
  *       required: true
  *       content:
@@ -195,7 +192,6 @@ const Workout = require("../../models/User/Workout");
  *   post:
  *     summary: Recommend a workout based on user input
  *     tags: [Workout]
- *     security: []
  *     requestBody:
  *       required: true
  *       content:
