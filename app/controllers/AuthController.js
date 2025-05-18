@@ -1909,7 +1909,7 @@ exports.getProfile = [
 ];
 
 // Edit user profile
-exports.updateProfile = [
+exports.updateUserProfile = [
 	body("username")
 		.optional()
 		.isString()

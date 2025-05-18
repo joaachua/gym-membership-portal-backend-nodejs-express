@@ -17,7 +17,7 @@ router.post('/reset-password', AuthController.userResetPassword);
 
 router.use(verifyToken);
 router.post('/profile', AuthController.getProfile);
-router.post('/profile/edit', AuthController);
+router.post('/profile/edit', AuthController.updateUserProfile);
 router.post('/change-password', AuthController.changePassword);
 router.post('/logout', AuthController.logout);
 
