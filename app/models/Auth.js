@@ -43,14 +43,23 @@ const Auth = {
 		const trx = await knex.transaction();
 	
 		try {
-			const updateData = {
-				salutation,
-				username,
-				full_name,
-				email,
-				phone_number,
-			};
+			let updateData;
 	
+			if (salutation !== undefined) {
+				updateData.salutation = salutation;
+			}
+			if (username !== undefined) {
+				updateData.username = username;
+			}
+			if (full_name !== undefined) {
+				updateData.full_name = full_name;
+			}
+			if (email !== undefined) {
+				updateData.email = email;
+			}
+			if (phone_number !== undefined) {
+				updateData.phone_number = phone_number;
+			}
 			if (password !== undefined) {
 				updateData.password = password;
 			}
