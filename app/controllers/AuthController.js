@@ -779,6 +779,44 @@ const { body, validationResult } = require("express-validator");
 
 /**
  * @swagger
+ * /user/profile/edit:
+ *   post:
+ *     summary: Update user profile
+ *     tags: [User Auth]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               username:
+ *                 type: string
+ *                 example: johndoe
+ *               full_name:
+ *                 type: string
+ *                 example: John Doe
+ *               email:
+ *                 type: string
+ *                 example: johndoe@example.com
+ *               phone_number:
+ *                 type: string
+ *                 example: "1234567890"
+ *     responses:
+ *       200:
+ *         description: Profile update successfully
+ *       400:
+ *         description: Validation failed
+ *       402:
+ *         description: Username already exists
+ *       404:
+ *         description: Email not found
+ *       500:
+ *         description: Error updating profile
+ */
+
+/**
+ * @swagger
  * /user/logout:
  *   post:
  *     summary: Logout the user
@@ -1068,8 +1106,6 @@ exports.updateProfile = [
 		.isLength({ min: 3, max: 50 })
 		.withMessage("Full Name must be between 3 and 50 characters"),
 
-	body("role").optional().isString().withMessage("Role name must be a string"),
-
 	body("email")
 		.optional()
 		.isEmail()
@@ -1098,7 +1134,7 @@ exports.updateProfile = [
 			);
 		}
 
-		const { username, full_name, role, email, phone_number } = req.body;
+		const { username, full_name, email, phone_number } = req.body;
 		const id = req.user.id;
 		try {
 			const existingAdmin = await Auth.findUserById(id);
@@ -1122,7 +1158,6 @@ exports.updateProfile = [
 			const updatedAdmin = await Auth.updateUserProfile(id, {
 				username,
 				full_name,
-				role,
 				email,
 				phone_number,
 			});
@@ -1135,8 +1170,9 @@ exports.updateProfile = [
 		}
 	},
 ];
+
 // Change Password
-exports.changePassword = [
+/*exports.changePassword = [
 	body("email")
 		.isEmail()
 		.withMessage("Email must be a valid email address")
@@ -1194,7 +1230,7 @@ exports.changePassword = [
 			]);
 		}
 	},
-];
+];*/
 
 // User registration
 exports.registerUser = [
@@ -1760,12 +1796,6 @@ exports.userResetPassword = [
 
 // Change Password
 exports.changePassword = [
-	body("email")
-		.isEmail()
-		.withMessage("Email must be a valid email address")
-		.isLength({ max: 100 })
-		.withMessage("Email must be less than 100 characters"),
-
 	body("old_password").notEmpty().withMessage("Old password is required"),
 
 	body("new_password")
@@ -1792,9 +1822,9 @@ exports.changePassword = [
 			);
 		}
 
-		const { old_password, new_password } = req.body;
+		const { old_password, new_password, confirm_password } = req.body;
 		try {
-			const user = await Auth.findUserByEmail(req.user.email);
+			const user = await Auth.findUserById(req.user.user_id);
 			if (!user) {
 				return sendErrorResponse(res, 400, "User not found");
 			}
@@ -1809,6 +1839,14 @@ exports.changePassword = [
 					res,
 					400,
 					"New password cannot be the same as old password"
+				);
+			}
+
+			if (new_password == confirm_password) {
+				return sendErrorResponse(
+					res,
+					400,
+					"New password and confirm password must be the same"
 				);
 			}
 
@@ -1864,6 +1902,90 @@ exports.getProfile = [
 			sendSuccessResponse(res, 200, "User retrieved successfully", user);
 		} catch (error) {
 			sendErrorResponse(res, 400, "Error retrieving user", [
+				error.message || "Internal Server Error",
+			]);
+		}
+	},
+];
+
+// Edit user profile
+exports.updateProfile = [
+	body("username")
+		.optional()
+		.isString()
+		.withMessage("Username must be a string")
+		.isLength({ min: 3, max: 30 })
+		.withMessage("Username must be between 3 and 30 characters")
+		.matches(/^[a-zA-Z0-9_]+$/)
+		.withMessage("Username can only contain letters, numbers, and underscores"),
+
+	body("full_name")
+		.optional()
+		.isString()
+		.withMessage("Full Name must be a string")
+		.isLength({ min: 3, max: 50 })
+		.withMessage("Full Name must be between 3 and 50 characters"),
+
+	body("email")
+		.optional()
+		.isEmail()
+		.withMessage("Email must be a valid email address")
+		.isLength({ max: 100 })
+		.withMessage("Email must be less than 100 characters"),
+
+	body("phone_number")
+		.optional()
+		.matches(/^\+?\d{10,15}$/)
+		.withMessage(
+			'Phone Number must be between 10 and 15 digits and can optionally start with a "+"'
+		),
+
+	async (req, res) => {
+		const errors = validationResult(req);
+		if (!errors.isEmpty()) {
+			return sendErrorResponse(
+				res,
+				400,
+				"Validation failed.",
+				errors.array().map((err) => ({
+					field: err.param,
+					message: err.msg,
+				}))
+			);
+		}
+
+		const { salutation, username, full_name, email, phone_number } = req.body;
+		const id = req.user.id;
+		try {
+			const existingUser = await Auth.findUserById(id);
+			if (!existingUser) {
+				return sendErrorResponse(res, 400, "User not found", []);
+			}
+			if (email) {
+				const existingUserEmail = await Auth.findUserByEmail(email);
+				if (existingUserEmail && existingUserEmail.id !== id) {
+					return sendErrorResponse(res, 400, "Email already exists", []);
+				}
+			}
+
+			if (username) {
+				const existingUserName = await Auth.findAdminByUsername(username);
+				if (existingUserName && existingUserName.id !== id) {
+					return sendErrorResponse(res, 400, "Username already exists", []);
+				}
+			}
+
+			const updatedUser = await Auth.updateUserProfile(id, {
+				salutation,
+				username,
+				full_name,
+				email,
+				phone_number,
+			});
+
+			sendSuccessResponse(res, 200, "User updated successfully", updatedUser);
+		} catch (error) {
+			sendErrorResponse(res, 400, "Error update user", [
 				error.message || "Internal Server Error",
 			]);
 		}

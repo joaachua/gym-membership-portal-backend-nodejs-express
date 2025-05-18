@@ -38,21 +38,25 @@ const Auth = {
 	},
 
 	updateUserProfile: async (id, data) => {
-		const { salutation, username, full_name, role, email, phone_number, password } = data;
-
+		const { salutation, username, full_name, email, phone_number, password } = data;
+	
 		const trx = await knex.transaction();
-
+	
 		try {
-			const [userId] = await trx("users").where({ id }).update({
+			const updateData = {
 				salutation,
-				username, 
-				full_name, 
-				role, 
-				email, 
+				username,
+				full_name,
+				email,
 				phone_number,
-				password
-			});
-
+			};
+	
+			if (password !== undefined) {
+				updateData.password = password;
+			}
+	
+			const [userId] = await trx("users").where({ id }).update(updateData);
+	
 			await trx.commit();
 			return userId;
 		} catch (error) {
@@ -60,6 +64,7 @@ const Auth = {
 			throw error;
 		}
 	},
+	
 
 	updatePassword: async (id, password) => {
 		try {

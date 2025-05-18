@@ -14,14 +14,17 @@ router.post('/resend-otp', AuthController.resendOtp);
 router.post('/forgot-password', AuthController.forgotPassword);
 router.post('/verify-reset-otp', AuthController.verifyResetOtp);
 router.post('/reset-password', AuthController.userResetPassword);
+
+router.use(verifyToken);
+router.post('/profile', AuthController.getProfile);
+router.post('/profile/edit', AuthController);
+router.post('/change-password', AuthController.changePassword);
+router.post('/logout', AuthController.logout);
+
 router.post('/recommend-workout', WorkoutController.recommendWorkout);
 router.post('/estimate-calorie', WorkoutController.estimateCalories);
 router.post('/workout-log', WorkoutController.logWorkout);
 router.post('/generate-workout', WorkoutController.generateWorkout);
-
-router.use(verifyToken);
-router.post('/profile', AuthController.getProfile);
-router.post('/logout', AuthController.logout);
 
 router.post("/ads/list", AdsController.adsList);
 
