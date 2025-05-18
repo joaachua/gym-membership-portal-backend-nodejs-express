@@ -155,11 +155,8 @@ const Workout = require("../../models/User/Workout");
  *         application/json:
  *           schema:
  *             type: object
- *             required: [user_id, exercise, duration, weightKg]
+ *             required: [exercise, duration, weightKg]
  *             properties:
- *               user_id:
- *                 type: integer
- *                 example: 1
  *               exercise:
  *                 type: string
  *                 example: running
@@ -321,28 +318,28 @@ exports.estimateCalories = async (req, res) => {
 
 exports.logWorkout = async (req, res) => {
 	try {
-		const { user_id, exercise, duration, weightKg } = req.body;
+		const { exercise, duration, weightKg, calories_burned } = req.body;
 
-		if (!user_id || !exercise || !duration || !weightKg) {
+		if (!exercise || !duration || !weightKg) {
 			return sendErrorResponse(res, 400, "Missing required fields");
 		}
 
-		const calories = await Workout.calculateCaloriesBurned(
-			exercise,
-			duration,
-			weightKg
-		);
-		if (calories === null)
-			return sendErrorResponse(res, 400, "Invalid exercise type");
+		//const calories = await Workout.calculateCaloriesBurned(
+		//	exercise,
+		//	duration,
+		//	weightKg
+		//);
 
-		// Save to DB (you’d use your DB ORM here)
+		//if (calories === null)
+		//	return sendErrorResponse(res, 400, "Invalid exercise type");
+
 		await Workout.createLog({
-			user_id,
+			user_id: req.user.user_id,
 			exercise,
 			duration,
 			weight_kg: weightKg,
 			date: new Date(),
-			calories_burned: calories,
+			calories_burned: calories_burned,
 		});
 
 		return sendSuccessResponse(res, 200, "Workout logged successfully", {
