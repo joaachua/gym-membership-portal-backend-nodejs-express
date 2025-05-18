@@ -341,7 +341,7 @@ exports.logWorkout = async (req, res) => {
 		return sendSuccessResponse(res, 200, "Workout logged successfully", {
 			exercise,
 			duration,
-			calories,
+			calories_burned,
 		});
 	} catch (err) {
 		console.error(err);
