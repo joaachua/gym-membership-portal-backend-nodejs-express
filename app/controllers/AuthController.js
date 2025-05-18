@@ -1842,7 +1842,7 @@ exports.changePassword = [
 				);
 			}
 
-			if (new_password == confirm_password) {
+			if (new_password !== confirm_password) {
 				return sendErrorResponse(
 					res,
 					400,
