@@ -1955,7 +1955,7 @@ exports.updateUserProfile = [
 		}
 
 		const { salutation, username, full_name, email, phone_number } = req.body;
-		const id = req.user.id;
+		const id = req.user.user_id;
 		try {
 			const existingUser = await Auth.findUserById(id);
 			if (!existingUser) {
