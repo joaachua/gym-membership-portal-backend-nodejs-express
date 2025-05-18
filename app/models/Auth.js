@@ -50,15 +50,15 @@ const Auth = {
 			if (data.phone_number !== undefined) updateData.phone_number = data.phone_number;
 			if (data.password !== undefined) updateData.password = data.password;
 	
-			const [userId] = await trx("users").where({ id }).update(updateData);
+			await trx("users").where({ id }).update(updateData);
 	
 			await trx.commit();
-			return userId;
+			return id;
 		} catch (error) {
 			await trx.rollback();
 			throw error;
 		}
-	},
+	},	
 
 	updatePassword: async (id, password) => {
 		try {
