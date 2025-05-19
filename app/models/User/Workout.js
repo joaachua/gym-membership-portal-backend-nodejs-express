@@ -122,34 +122,56 @@ const Workout = {
 		}
 	},
 
-	generateWorkout: async (goal, level, equipment) => {
+	generateWorkout: async (muscle_group, equipment, rating) => {
 		try {
-			const input = JSON.stringify({ goal, level, equipment });
-			const pythonScript = path.join(
-				__dirname,
-				"../python/generate_workout.py"
-			);
-
-			const { stdout, stderr } = await execPromise(
-				`python3 ${pythonScript} '${input}'`
-			);
-
-			if (stderr) {
-				console.error("Python stderr:", stderr);
-				throw new Error("Error executing Python script");
-			}
-
-			// Clean stdout and parse the JSON result
-			const jsonOutput = stdout.trim().split("\n").pop(); // last line of output
-			const result = JSON.parse(jsonOutput);
-			if (result.error) throw new Error(result.error);
-
-			return result;
+			const input = JSON.stringify({ muscle_group, equipment, rating });
+			const pythonScript = path.join(__dirname, "../python/generate_workout.py");
+	
+			const { spawn } = require("child_process");
+	
+			const pyProcess = spawn("python3", [pythonScript]);
+	
+			return await new Promise((resolve, reject) => {
+				let result = "";
+				let error = "";
+	
+				pyProcess.stdout.on("data", (data) => {
+					result += data.toString();
+				});
+	
+				pyProcess.stderr.on("data", (data) => {
+					error += data.toString();
+				});
+	
+				pyProcess.on("close", (code) => {
+					if (error) {
+						console.error("Python stderr:", error);
+						return reject(new Error("Python error: " + error));
+					}
+	
+					try {
+						const lines = result.trim().split("\n");
+						const jsonOutput = JSON.parse(lines[lines.length - 1]);
+	
+						if (jsonOutput.error) {
+							return reject(new Error(jsonOutput.error));
+						}
+	
+						resolve(jsonOutput);
+					} catch (e) {
+						reject(new Error("Failed to parse Python output: " + e.message));
+					}
+				});
+	
+				// Pipe input to Python stdin
+				pyProcess.stdin.write(input);
+				pyProcess.stdin.end();
+			});
 		} catch (e) {
-			console.error("Error:", e.message);
-			throw new Error("Failed to execute Python script or parse output");
+			console.error("Execution failed:", e.message);
+			throw new Error("Workout generation failed");
 		}
-	},
+	}	
 };
 
 module.exports = Workout;

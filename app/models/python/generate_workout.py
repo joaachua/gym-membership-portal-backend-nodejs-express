@@ -1,49 +1,38 @@
 import sys
 import json
 import joblib
-import pandas as pd
+import numpy as np
 
 # Load model and encoders
-model = joblib.load("app/models/python/workout_model.pkl")
-goal_enc = joblib.load("app/models/python/goal_encoder.pkl")
-level_enc = joblib.load("app/models/python/level_encoder.pkl")
-equip_enc = joblib.load("app/models/python/equip_encoder.pkl")
-workout_enc = joblib.load("app/models/python/workout_encoder.pkl")
+model = joblib.load('app/models/python/workout_model.pkl')
+muscle_enc = joblib.load('app/models/python/muscle_encoder.pkl')
+equip_enc = joblib.load('app/models/python/equip_encoder.pkl')
+workout_enc = joblib.load('app/models/python/workout_encoder.pkl')
 
-# Read input
-input_data = json.loads(sys.argv[1])
+def main():
+    try:
+        # Read JSON input from Node.js
+        input_data = json.loads(sys.stdin.read())
 
-goal = input_data["goal"]
-level = input_data["level"]
-equipment = input_data["equipment"]
+        muscle_group = input_data.get("muscle_group")
+        equipment = input_data.get("equipment")
+        rating = float(input_data.get("rating", 0))
 
-# Encode input
-goal_enc_val = goal_enc.transform([goal])[0]
-level_enc_val = level_enc.transform([level])[0]
-equip_enc_val = equip_enc.transform([equipment])[0]
+        # Encode inputs
+        muscle_encoded = muscle_enc.transform([muscle_group])[0]
+        equip_encoded = equip_enc.transform([equipment])[0]
 
-# Prepare input for prediction
-input_df = pd.DataFrame([{
-    "goal_enc": goal_enc_val,
-    "level_enc": level_enc_val,
-    "equip_enc": equip_enc_val
-}])
+        # Predict
+        features = np.array([[muscle_encoded, equip_encoded, rating]])
+        workout_encoded = model.predict(features)[0]
+        workout_name = workout_enc.inverse_transform([workout_encoded])[0]
 
-# Get top-N predicted workouts based on probability
-N = 5
+        # Output result as JSON
+        output = { "workout": workout_name }
+        print(json.dumps(output))
 
-# Predict probabilities
-probs = model.predict_proba(input_df)[0]
+    except Exception as e:
+        print(json.dumps({ "error": str(e) }))
 
-# Get indices of top-N workouts
-top_n_indices = probs.argsort()[-N:][::-1]
-
-# Decode workout names
-top_n_workouts = workout_enc.inverse_transform(top_n_indices)
-
-# Output the result
-result = {
-    "workouts": list(top_n_workouts)
-}
-
-print(json.dumps(result))
+if __name__ == "__main__":
+    main()

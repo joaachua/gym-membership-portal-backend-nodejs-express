@@ -229,12 +229,22 @@ const Workout = require("../../models/User/Workout");
  *           schema:
  *             type: object
  *             required:
- *               - goal
+ *               - muscle_group
+ *               - equipment
+ *               - rating
  *             properties:
- *               goal:
+ *               muscle_group:
  *                 type: string
  *                 description: 0 = Fat loss, 1 = Muscle gain, 2 = Endurance
- *                 example: 1
+ *                 example: Chest
+ *               equipment:
+ *                 type: string
+ *                 description: 0 = Fat loss, 1 = Muscle gain, 2 = Endurance
+ *                 example: Chest
+ *               rating:
+ *                 type: string
+ *                 description: 0 = Fat loss, 1 = Muscle gain, 2 = Endurance
+ *                 example: Chest
  *     responses:
  *       200:
  *         description: Recommended workout
@@ -393,18 +403,18 @@ exports.logList = async (req, res) => {
 exports.generateWorkout = [
 	async (req, res) => {
 		try {
-			const { goal, level, equipment } = req.body;
+			const { muscle_group, equipment, rating } = req.body;
 
 			// Validate input (optional: add more robust checks here)
 			if (
-				goal === undefined,
-				level === undefined,
-				equipment === undefined
+				muscle_group === undefined,
+				equipment === undefined,
+				rating === undefined
 			) {
 				return sendErrorResponse(res, 400, "Missing required fields");
 			}
 
-			const workout = await Workout.generateWorkout(goal, level, equipment);
+			const workout = await Workout.generateWorkout(muscle_group, equipment, rating);
 
 			return sendSuccessResponse(
 				res,
