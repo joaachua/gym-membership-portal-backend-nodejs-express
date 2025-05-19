@@ -2,6 +2,7 @@ import pandas as pd
 import joblib
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.preprocessing import LabelEncoder
+from sklearn.model_selection import StratifiedKFold
 from sklearn.model_selection import train_test_split, GridSearchCV
 from sklearn.metrics import classification_report
 import os
@@ -49,7 +50,8 @@ param_grid = {
     'max_depth': [5, 10, None],
     'min_samples_split': [2, 5],
 }
-grid_search = GridSearchCV(rf, param_grid, cv=2, n_jobs=-1, verbose=1)
+cv = StratifiedKFold(n_splits=2, shuffle=True, random_state=42)
+grid_search = GridSearchCV(rf, param_grid, cv=cv, n_jobs=-1, verbose=1)
 grid_search.fit(X_train, y_train)
 
 # Best model
@@ -57,7 +59,14 @@ best_rf = grid_search.best_estimator_
 
 # Evaluate
 y_pred = best_rf.predict(X_test)
-print(classification_report(y_test, y_pred, target_names=workout_enc.classes_))
+
+# Get unique labels present in y_test
+labels = sorted(set(y_test))
+
+# Get corresponding class names for those labels
+target_names = [workout_enc.classes_[i] for i in labels]
+
+print(classification_report(y_test, y_pred, labels=labels, target_names=target_names))
 
 # Save model and encoders
 joblib.dump(best_rf, 'app/models/python/workout_model.pkl')
