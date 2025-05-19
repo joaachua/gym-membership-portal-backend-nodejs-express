@@ -11,6 +11,8 @@ workout_enc = joblib.load('app/models/python/workout_encoder.pkl')
 
 def main():
     try:
+        raw_input = sys.stdin.read()
+        print("Received input:", raw_input, file=sys.stderr)
         # Read JSON input from Node.js
         input_data = json.loads(sys.stdin.read())
 
@@ -19,8 +21,15 @@ def main():
         rating = float(input_data.get("rating", 0))
 
         # Encode inputs
-        muscle_encoded = muscle_enc.transform([muscle_group])[0]
-        equip_encoded = equip_enc.transform([equipment])[0]
+        try:
+            muscle_encoded = muscle_enc.transform([muscle_group])[0]
+        except Exception:
+            raise ValueError(f"Unknown muscle group: {muscle_group}")
+        
+        try:
+            equip_encoded = equip_enc.transform([equipment])[0]
+        except Exception:
+            raise ValueError(f"Unknown equipment: {equipment}")
 
         # Prepare DataFrame with correct column names
         features = pd.DataFrame([{
