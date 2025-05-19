@@ -3,6 +3,7 @@ import json
 import joblib
 import pandas as pd
 import numpy as np
+import random
 
 try:
     # Load model and encoders
@@ -46,21 +47,25 @@ def main():
 
         print("Predicting...", file=sys.stderr)
         
-        # Check if model supports predict_proba
         if not hasattr(model, "predict_proba"):
             raise AttributeError("Model does not support probability prediction.")
 
-        proba = model.predict_proba(features_df)[0]  # Get probabilities for all classes
-        top_n = 5  # Number of workouts to suggest
+        proba = model.predict_proba(features_df)[0]  # probabilities for all classes
 
-        # Get indices of top_n highest probabilities
+        top_n = 10  # Get top 10 workouts by probability
+        pick_n = 5  # Number to randomly pick from top 10
+
         top_indices = np.argsort(proba)[::-1][:top_n]
+        top_workouts_all = workout_enc.inverse_transform(top_indices).tolist()
 
-        # Decode the top predicted workouts
-        top_workouts = workout_enc.inverse_transform(top_indices).tolist()
+        # Randomly sample 5 unique workouts from top 10
+        if len(top_workouts_all) < pick_n:
+            sampled_workouts = top_workouts_all  # fallback if less than 5
+        else:
+            sampled_workouts = random.sample(top_workouts_all, pick_n)
 
-        print("Workouts predicted:", top_workouts, file=sys.stderr)
-        print(json.dumps({ "workouts": top_workouts }))
+        print("Workouts predicted (random sample):", sampled_workouts, file=sys.stderr)
+        print(json.dumps({ "workouts": sampled_workouts }))
 
     except Exception as e:
         print(json.dumps({ "error": str(e) }))
