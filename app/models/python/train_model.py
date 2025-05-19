@@ -6,7 +6,7 @@ from sklearn.model_selection import train_test_split, GridSearchCV
 from sklearn.metrics import classification_report
 
 # Load the dataset
-df = pd.read_excel('./Gym Exercises Dataset.xlsx')
+df = pd.read_excel('./Gym-Exercises-Dataset.xlsx')
 
 # Drop junk column
 df = df.drop(columns=['Description'], errors='ignore')
