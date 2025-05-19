@@ -49,7 +49,7 @@ param_grid = {
     'max_depth': [5, 10, None],
     'min_samples_split': [2, 5],
 }
-grid_search = GridSearchCV(rf, param_grid, cv=3, n_jobs=-1, verbose=1)
+grid_search = GridSearchCV(rf, param_grid, cv=2, n_jobs=-1, verbose=1)
 grid_search.fit(X_train, y_train)
 
 # Best model
