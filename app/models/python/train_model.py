@@ -4,9 +4,11 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.preprocessing import LabelEncoder
 from sklearn.model_selection import train_test_split, GridSearchCV
 from sklearn.metrics import classification_report
+import os
 
 # Load the dataset
-df = pd.read_excel('./Gym-Exercises-Dataset.xlsx')
+file_path = os.path.join(os.path.dirname(__file__), 'Gym-Exercises-Dataset.xlsx')
+df = pd.read_excel(file_path)
 
 # Drop junk column
 df = df.drop(columns=['Description'], errors='ignore')
