@@ -17,49 +17,6 @@ const MET_VALUES = {
 };
 
 const Workout = {
-	recommendWorkout: async (userInput) => {
-		const { age, goal, fitness_level, hours_per_week, has_equipment } =
-			userInput;
-		let workoutPlan = [];
-
-		if (fitness_level === 0) {
-			workoutPlan.push("Bodyweight exercises (Push-ups, Squats, Planks)");
-			if (goal === 1) workoutPlan.push("Focus on bodyweight exercises"); // Muscle gain
-			if (goal === 2)
-				workoutPlan.push("Try more reps and increase workout time gradually"); // Endurance
-		} else if (fitness_level === 1) {
-			workoutPlan.push("Weight training (Dumbbells, Barbell)");
-			if (goal === 1) workoutPlan.push("Increase sets and weights gradually");
-			if (goal === 2)
-				workoutPlan.push("Focus on circuit training with moderate weight");
-		} else if (fitness_level === 2) {
-			workoutPlan.push(
-				"Advanced weight training (Deadlifts, Squats, Bench Press)"
-			);
-			if (goal === 1) workoutPlan.push("Heavy lifting with low reps");
-			if (goal === 2)
-				workoutPlan.push("High-intensity interval training (HIIT)");
-		}
-
-		if (hours_per_week >= 5) {
-			workoutPlan.push(
-				"You can increase your workout frequency to 5 days a week"
-			);
-		} else if (hours_per_week >= 3) {
-			workoutPlan.push("Try to aim for 3-4 workout sessions per week");
-		}
-
-		if (!has_equipment) {
-			workoutPlan.push("No equipment? Focus on bodyweight exercises");
-		} else {
-			workoutPlan.push(
-				"With equipment, you can try more weight training exercises"
-			);
-		}
-
-		return workoutPlan;
-	},
-
 	calculateCaloriesBurned: async (exercise, duration, weightKg) => {
 		const met = MET_VALUES[exercise.toLowerCase()];
 		if (!met) {
@@ -89,6 +46,70 @@ const Workout = {
 		if (!id) throw new Error("Failed to create workout log");
 
 		return { id, ...insertData };
+	},
+
+	editLog: async (id, data) => {
+        if (!id) throw new Error("Invalid log ID");
+
+		const { exercise, duration, weight_kg, date, calories_burned } = data;
+
+		const trx = await knex.transaction();
+
+		try {
+			const updateData = {};
+            if (exercise) updateData.exercise = exercise;
+            if (duration) updateData.duration = duration;
+            if (weight_kg) updateData.weight_kg = weight_kg;
+            if (date) updateData.date = date;
+            if (calories_burned) updateData.calories_burned = calories_burned;
+	
+			await trx("user_workouts").where({ id }).update(updateData);
+	
+			await trx.commit();
+            return true;
+		} catch (error) {
+            await trx.rollback();
+            throw error;
+		}
+	},
+
+	viewLog: async (id) => {
+        if (!id) throw new Error("Invalid log ID");
+
+		try {
+            const details = await trx("user_workouts").where({ id }).first();
+            if (!details) return null;
+
+			return details;
+		} catch (error) {
+            throw error;
+		}
+	},
+
+	deleteLog: async (id) => {
+		const trx = await knex.transaction();
+        if (!id) throw new Error("Invalid log ID");
+
+		try {
+            const deleted = await trx("user_workouts").where({ id }).del();
+    
+            await trx.commit();
+            return deleted > 0;
+		} catch (error) {
+            await trx.rollback();
+            throw error;
+		}
+	},
+
+	logList: async (user_id) => {
+		try {
+            const list = await trx("user_workouts").where({ user_id });
+            if (!list) return null;
+
+			return list;
+		} catch (error) {
+            throw error;
+		}
 	},
 
 	generateWorkout: async (goal, level, equipment) => {

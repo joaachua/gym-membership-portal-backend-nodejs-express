@@ -21,9 +21,12 @@ router.post('/profile/edit', AuthController.updateUserProfile);
 router.post('/change-password', AuthController.changePassword);
 router.post('/logout', AuthController.logout);
 
-router.post('/recommend-workout', WorkoutController.recommendWorkout);
 router.post('/estimate-calorie', WorkoutController.estimateCalories);
-router.post('/workout-log', WorkoutController.logWorkout);
+router.post('/workout-log/create', WorkoutController.logWorkout);
+router.post('/workout-log/update', WorkoutController.editLog);
+router.post('/workout-log/view', WorkoutController.viewLog);
+router.post('/workout-log/delete', WorkoutController.deleteLog);
+router.post('/workout-log/list', WorkoutController.logList);
 router.post('/generate-workout', WorkoutController.generateWorkout);
 
 router.post("/ads/list", AdsController.adsList);

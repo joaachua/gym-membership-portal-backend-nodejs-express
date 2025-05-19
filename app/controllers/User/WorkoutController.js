@@ -7,79 +7,6 @@ const Workout = require("../../models/User/Workout");
 
 /**
  * @swagger
- * /user/recommend-workout:
- *   post:
- *     summary: Recommend a workout based on user input
- *     tags: [Workout]
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             required:
- *               - age
- *               - goal
- *               - fitness_level
- *               - hours_per_week
- *               - has_equipment
- *             properties:
- *               age:
- *                 type: integer
- *                 example: 25
- *               goal:
- *                 type: integer
- *                 description: 0 = Fat loss, 1 = Muscle gain, 2 = Endurance
- *                 example: 1
- *               fitness_level:
- *                 type: integer
- *                 description: 0 = Beginner, 1 = Intermediate, 2 = Advanced
- *                 example: 0
- *               hours_per_week:
- *                 type: integer
- *                 example: 4
- *               has_equipment:
- *                 type: integer
- *                 description: 0 = No equipment, 1 = Has equipment
- *                 example: 1
- *     responses:
- *       200:
- *         description: Recommended workout
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 success:
- *                   type: boolean
- *                   example: true
- *                 status_code:
- *                   type: integer
- *                   example: 200
- *                 message:
- *                   type: string
- *                   example: Workout recommendation generated successfully
- *                 data:
- *                   type: object
- *                   properties:
- *                     workout:
- *                       type: array
- *                       items:
- *                         type: string
- *                       example: [
- *                         "Bodyweight exercises (Push-ups, Squats, Planks)",
- *                         "Focus on bodyweight exercises",
- *                         "Try to aim for 3-4 workout sessions per week",
- *                         "With equipment, you can try more weight training exercises"
- *                       ]
- *       400:
- *         description: Missing or invalid input
- *       500:
- *         description: Server error
- */
-
-/**
- * @swagger
  * /user/estimate-calorie:
  *   post:
  *     summary: Estimate calories burned for an exercise
@@ -142,10 +69,10 @@ const Workout = require("../../models/User/Workout");
 
 /**
  * @swagger
- * /user/workout-log:
+ * /user/workout-log/create:
  *   post:
  *     summary: Log a user's workout and calculate calories
- *     tags: [Workout]
+ *     tags: [User Workout Logs]
  *     requestBody:
  *       required: true
  *       content:
@@ -184,6 +111,109 @@ const Workout = require("../../models/User/Workout");
  *                       type: number
  *                     calories:
  *                       type: number
+ */
+
+/**
+ * @swagger
+ * /user/workout-log/update:
+ *   post:
+ *     summary: Edit a workout log
+ *     tags: [User Workout Logs]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - id
+ *               - exercise
+ *               - duration
+ *               - weight_kg
+ *             properties:
+ *               id:
+ *                 type: string
+ *               exercise:
+ *                 type: string
+ *               duration:
+ *                 type: number
+ *               weight_kg:
+ *                 type: number
+ *               date:
+ *                 type: string
+ *                 format: date
+ *               calories_burned:
+ *                 type: number
+ *     responses:
+ *       200:
+ *         description: Updated workout log successfully
+ *       400:
+ *         description: Missing required fields
+ *       500:
+ *         description: Server error
+ */
+
+/**
+ * @swagger
+ * /user/workout-log/view:
+ *   post:
+ *     summary: View a workout log by ID
+ *     tags: [User Workout Logs]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - id
+ *             properties:
+ *               id:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Retrieved workout log successfully
+ *       500:
+ *         description: Server error
+ */
+
+/**
+ * @swagger
+ * /user/workout-log/delete:
+ *   post:
+ *     summary: Delete a workout log
+ *     tags: [User Workout Logs]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - id
+ *             properties:
+ *               id:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Deleted workout log successfully
+ *       500:
+ *         description: Server error
+ */
+
+/**
+ * @swagger
+ * /user/workout-log/list:
+ *   get:
+ *     summary: List all workout logs for the current user
+ *     tags: [User Workout Logs]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Retrieved workout log list successfully
+ *       500:
+ *         description: Server error
  */
 
 /**
@@ -241,46 +271,6 @@ const Workout = require("../../models/User/Workout");
  *         description: Server error
  */
 
-exports.recommendWorkout = [
-	async (req, res) => {
-		try {
-			const { age, goal, fitness_level, hours_per_week, has_equipment } =
-				req.body;
-
-			// Validate input (optional: add more robust checks here)
-			if (
-				age === undefined ||
-				goal === undefined ||
-				fitness_level === undefined ||
-				hours_per_week === undefined ||
-				has_equipment === undefined
-			) {
-				return sendErrorResponse(res, 400, "Missing required fields");
-			}
-
-			const userInput = {
-				age: Number(req.body.age),
-				goal: Number(req.body.goal),
-				fitness_level: Number(req.body.fitness_level),
-				hours_per_week: Number(req.body.hours_per_week),
-				has_equipment: Number(req.body.has_equipment),
-			};
-
-			const workout = await Workout.recommendWorkout(userInput);
-
-			return sendSuccessResponse(
-				res,
-				200,
-				"Workout recommendation generated successfully",
-				workout
-			);
-		} catch (error) {
-			console.error(error);
-			return sendErrorResponse(res, 500, "Server error", [error.message]);
-		}
-	},
-];
-
 exports.estimateCalories = async (req, res) => {
 	try {
 		const { exercise, duration, weightKg } = req.body;
@@ -320,15 +310,6 @@ exports.logWorkout = async (req, res) => {
 			return sendErrorResponse(res, 400, "Missing required fields");
 		}
 
-		//const calories = await Workout.calculateCaloriesBurned(
-		//	exercise,
-		//	duration,
-		//	weightKg
-		//);
-
-		//if (calories === null)
-		//	return sendErrorResponse(res, 400, "Invalid exercise type");
-
 		await Workout.createLog({
 			user_id: req.user.user_id,
 			exercise,
@@ -345,7 +326,67 @@ exports.logWorkout = async (req, res) => {
 		});
 	} catch (err) {
 		console.error(err);
-		return sendErrorResponse(res, 500, "Server error");
+		return sendErrorResponse(res, 500, err || "Server error");
+	}
+};
+
+exports.editLog = async (req, res) => {
+	try {
+		const { id, exercise, duration, weight_kg, date, calories_burned } = req.body;
+
+		if (!exercise || !duration || !weight_kg) {
+			return sendErrorResponse(res, 400, "Missing required fields");
+		}
+
+		await Workout.editLog(id, {
+			exercise,
+			duration,
+			weight_kg,
+			date,
+			calories_burned,
+		});
+
+		return sendSuccessResponse(res, 200, "Updated workout log successfully");
+	} catch (err) {
+		console.error(err);
+		return sendErrorResponse(res, 500, err || "Server error");
+	}
+};
+
+exports.viewLog = async (req, res) => {
+	try {
+		const { id } = req.body;
+
+		const response = await Workout.viewLog(id);
+
+		return sendSuccessResponse(res, 200, "Retrieved workout log successfully", response);
+	} catch (err) {
+		console.error(err);
+		return sendErrorResponse(res, 500, err || "Server error");
+	}
+};
+
+exports.deleteLog = async (req, res) => {
+	try {
+		const { id } = req.body;
+
+		await Workout.deleteLog(id);
+
+		return sendSuccessResponse(res, 200, "Deleted workout log successfully");
+	} catch (err) {
+		console.error(err);
+		return sendErrorResponse(res, 500, err || "Server error");
+	}
+};
+
+exports.logList = async (req, res) => {
+	try {
+		const response = await Workout.logList(req.user.user_id);
+
+		return sendSuccessResponse(res, 200, "Retrieved workout log list successfully", response);
+	} catch (err) {
+		console.error(err);
+		return sendErrorResponse(res, 500, err || "Server error");
 	}
 };
 
