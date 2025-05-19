@@ -126,44 +126,42 @@ const Workout = {
 		try {
 			const input = JSON.stringify({ muscle_group, equipment, rating });
 			const pythonScript = path.join(__dirname, "../python/generate_workout.py");
-	
 			const { spawn } = require("child_process");
 	
 			const pyProcess = spawn("python3", [pythonScript]);
 	
 			return await new Promise((resolve, reject) => {
 				let result = "";
-				let error = "";
+				let errorOutput = "";
 	
 				pyProcess.stdout.on("data", (data) => {
 					result += data.toString();
 				});
 	
 				pyProcess.stderr.on("data", (data) => {
-					error += data.toString();
+					errorOutput += data.toString(); // Log only; don't auto-reject
 				});
 	
 				pyProcess.on("close", (code) => {
-					if (error) {
-						console.error("Python stderr:", error);
-						return reject(new Error("Python error: " + error));
-					}
-	
 					try {
-						const lines = result.trim().split("\n");
+						// Grab last non-empty line from stdout
+						const lines = result.trim().split("\n").filter(line => line.trim() !== "");
 						const jsonOutput = JSON.parse(lines[lines.length - 1]);
 	
 						if (jsonOutput.error) {
 							return reject(new Error(jsonOutput.error));
 						}
 	
-						resolve(jsonOutput);
+						return resolve(jsonOutput);
 					} catch (e) {
-						reject(new Error("Failed to parse Python output: " + e.message));
+						// If parsing fails, then check if stderr has anything useful
+						console.error("Python stderr:", errorOutput);
+						console.error("Raw stdout:", result);
+						return reject(new Error("Failed to parse Python output: " + e.message));
 					}
 				});
 	
-				// Pipe input to Python stdin
+				// Send JSON input to Python
 				pyProcess.stdin.write(input);
 				pyProcess.stdin.end();
 			});

@@ -2,6 +2,7 @@ import sys
 import json
 import joblib
 import pandas as pd
+import numpy as np
 
 try:
     # Load model and encoders
@@ -44,11 +45,22 @@ def main():
         }])
 
         print("Predicting...", file=sys.stderr)
-        workout_encoded = model.predict(features_df)[0]
-        workout_name = workout_enc.inverse_transform([workout_encoded])[0]
+        
+        # Check if model supports predict_proba
+        if not hasattr(model, "predict_proba"):
+            raise AttributeError("Model does not support probability prediction.")
 
-        print("Workout predicted:", workout_name, file=sys.stderr)
-        print(json.dumps({ "workout": workout_name }))
+        proba = model.predict_proba(features_df)[0]  # Get probabilities for all classes
+        top_n = 5  # Number of workouts to suggest
+
+        # Get indices of top_n highest probabilities
+        top_indices = np.argsort(proba)[::-1][:top_n]
+
+        # Decode the top predicted workouts
+        top_workouts = workout_enc.inverse_transform(top_indices).tolist()
+
+        print("Workouts predicted:", top_workouts, file=sys.stderr)
+        print(json.dumps({ "workouts": top_workouts }))
 
     except Exception as e:
         print(json.dumps({ "error": str(e) }))
