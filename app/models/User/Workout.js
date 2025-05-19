@@ -77,7 +77,7 @@ const Workout = {
         if (!id) throw new Error("Invalid log ID");
 
 		try {
-            const details = await trx("user_workouts").where({ id }).first();
+            const details = await knex("user_workouts").where({ id }).first();
             if (!details) return null;
 
 			return details;
@@ -103,7 +103,7 @@ const Workout = {
 
 	logList: async (user_id) => {
 		try {
-            const list = await trx("user_workouts").where({ user_id });
+            const list = await knex("user_workouts").where({ user_id });
             if (!list) return null;
 
 			return list;
