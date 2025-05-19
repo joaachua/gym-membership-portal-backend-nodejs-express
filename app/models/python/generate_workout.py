@@ -1,7 +1,7 @@
 import sys
 import json
 import joblib
-import numpy as np
+import pandas as pd
 
 # Load model and encoders
 model = joblib.load('app/models/python/workout_model.pkl')
@@ -22,8 +22,14 @@ def main():
         muscle_encoded = muscle_enc.transform([muscle_group])[0]
         equip_encoded = equip_enc.transform([equipment])[0]
 
+        # Prepare DataFrame with correct column names
+        features = pd.DataFrame([{
+            "muscle_enc": muscle_encoded,
+            "equip_enc": equip_encoded,
+            "rating": rating
+        }])
+
         # Predict
-        features = np.array([[muscle_encoded, equip_encoded, rating]])
         workout_encoded = model.predict(features)[0]
         workout_name = workout_enc.inverse_transform([workout_encoded])[0]
 
