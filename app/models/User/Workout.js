@@ -3,6 +3,7 @@ const { exec } = require("child_process");
 const util = require("util");
 const execPromise = util.promisify(exec);
 const path = require("path");
+const moment = require("moment-timezone");
 
 const MET_VALUES = {
 	"push-ups": 8,
@@ -103,10 +104,19 @@ const Workout = {
 
 	logList: async (user_id) => {
 		try {
-            const list = await knex("user_workouts").where({ user_id });
-            if (!list) return null;
+            const list = await knex("user_workouts")
+			.where({ user_id })
+			.orderBy("date", "desc"); // or 'created_at'
 
-			return list;
+			if (!list || list.length === 0) return [];
+
+			// Adjust all dates to +8 (Malaysia Time)
+			const adjustedList = list.map((item) => ({
+				...item,
+				date: moment(item.date).tz("Asia/Kuala_Lumpur").format(), // ISO with +08:00
+			}));
+
+			return adjustedList;
 		} catch (error) {
             throw error;
 		}
