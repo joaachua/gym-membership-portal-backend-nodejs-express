@@ -93,6 +93,20 @@ exports.viewClass = [
 	},
 ];
 
+exports.registerClass = async (req, res) => {
+	const { class_id } = req.body;
+  
+	try {
+	  const registrationId = await UserModel.Classes.registerClass({ user_id: req.user.user_id, class_id });
+  
+	  sendSuccessResponse(res, 200, "Class registered successfully", {
+		registration_id: registrationId
+	  });
+	} catch (err) {
+	  sendErrorResponse(res, 400, err.message, []);
+	}
+  };
+
 exports.classList = [
 	async (req, res) => {
 		try {

@@ -17,7 +17,24 @@ const Classes = {
         } catch (error) {
             throw error;
         }
-	},  
+	},
+
+    registerClass: async ({ user_id, class_id }) => {
+        const existing = await knex("user_classes")
+            .where({ user_id, class_id })
+            .first();
+
+        if (existing) {
+            throw new Error("User already registered for this class.");
+        }
+
+        const [insertedId] = await knex("user_classes").insert({
+            user_id,
+            class_id,
+        });
+
+        return insertedId;
+    },
 
     listClasses: async (filters = {}) => {
         const { title, trainer_id, status, page = 1, perPage = 10 } = filters;

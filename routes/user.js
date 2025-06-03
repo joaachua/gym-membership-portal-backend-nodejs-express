@@ -36,6 +36,7 @@ router.post("/achievement/list", AchievementController.userAchievements);
 router.post("/ads/list", AdsController.adsList);
 
 router.post("/class/view", ClassController.viewClass);
+router.post("/class/register", ClassController.registerClass);
 router.post("/class/list", ClassController.classList);
 
 router.post("/centre/view", CentreController.viewCentre);
