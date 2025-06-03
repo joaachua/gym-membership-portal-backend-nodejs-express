@@ -72,95 +72,6 @@ const { Auth, UserModel } = require("../../models/models");
  *         description: Failed to retrieve centre list
  */
 
-exports.uploadFile = [
-	async (req, res) => {
-		const errors = validationResult(req);
-		if (!errors.isEmpty()) {
-			return sendErrorResponse(res, 400, "Validation failed", errors.array());
-		}
-
-		try {
-			const file = req.file;
-
-			if (!file) {
-				return sendErrorResponse(res, 400, "Validation failed", [
-					{ msg: "File is required" },
-				]);
-			}
-
-			const allowedMimeTypes = ["application/pdf"];
-
-			if (
-				!file.mimetype.startsWith("image/") &&
-				!allowedMimeTypes.includes(file.mimetype)
-			) {
-				const filePath = path.join(
-					__dirname,
-					"../../",
-					"uploads/images",
-					file.filename
-				);
-				deleteUploadedFile(filePath);
-
-				return sendErrorResponse(res, 400, "Only pdf or image files are allowed");
-			}
-
-			const response = [{ file: file.filename }];
-
-			return sendSuccessResponse(res, 200, "File processed successfully", response);
-		} catch (error) {
-			sendErrorResponse(res, 500, "Error processing file", [
-				error.message || "Internal Server Error",
-			]);
-		}
-	},
-];
-
-exports.storeCentre = [
-	async (req, res) => {
-		try {
-			const result = await UserModel.Centres.createCentre(req.body);
-			return sendSuccessResponse(res, 200, "Centre created successfully", result);
-		} catch (error) {
-			return sendErrorResponse(res, 500, error.message);
-		}
-	},
-];
-
-exports.updateCentre = [
-	async (req, res) => {
-		const {
-			id,
-			title, 
-            description, 
-            featured_img, 
-            trainer_id,
-            is_recurring, 
-            recurrence_pattern, 
-            status,
-            schedules
-		} = req.body;
-
-		if (!id) {
-			return sendErrorResponse(res, 400, "Centre ID is required");
-		}
-
-		const updateData = {
-			title,
-			description,
-            featured_img, 
-            trainer_id,
-            is_recurring, 
-            recurrence_pattern, 
-            status,
-            schedules
-		};
-
-		const result = await UserModel.Centres.editCentre(id, updateData);
-		return sendSuccessResponse(res, 200, "Centre updated successfully", result);
-	},
-];
-
 exports.viewCentre = [
 	async (req, res) => {
 		const { id } = req.body;
@@ -181,28 +92,6 @@ exports.viewCentre = [
 			return sendSuccessResponse(res, 200, "Centre retrieved successfully", singleCentre);
 		} catch (error) {
 			return sendErrorResponse(res, 500, "Error retrieving centre", error.message);
-		}
-	},
-];
-
-exports.deleteCentre = [
-	async (req, res) => {
-		const { id } = req.body;
-
-		if (!id) {
-			return sendErrorResponse(res, 400, "Centre ID is required");
-		}
-
-		try {
-			const singleCentre = await UserModel.Centres.deleteCentreById(id);
-
-			if (!singleCentre) {
-				return sendErrorResponse(res, 400, "Centre not found");
-			}
-
-			return sendSuccessResponse(res, 200, "Centre deleted successfully", singleCentre);
-		} catch (error) {
-			return sendErrorResponse(res, 500, "Error deleting centre", error.message);
 		}
 	},
 ];
