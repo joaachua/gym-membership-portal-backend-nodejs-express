@@ -110,7 +110,7 @@ const { Auth, AdminModel } = require("../../models/models");
  *                 type: string
  *               featured_img:
  *                 type: string
- *               trainer_id:
+ *               centre_id:
  *                 type: integer
  *               is_recurring:
  *                 type: boolean
@@ -192,7 +192,7 @@ const { Auth, AdminModel } = require("../../models/models");
  *                 type: string
  *               featured_img:
  *                 type: string
- *               trainer_id:
+ *               centre_id:
  *                 type: integer
  *               is_recurring:
  *                 type: boolean
@@ -351,7 +351,7 @@ exports.updateClass = [
 			title, 
             description, 
             featured_img, 
-            trainer_id,
+            centre_id,
             is_recurring, 
             recurrence_pattern, 
             status,
@@ -366,7 +366,7 @@ exports.updateClass = [
 			title,
 			description,
             featured_img, 
-            trainer_id,
+            centre_id,
             is_recurring, 
             recurrence_pattern, 
             status,

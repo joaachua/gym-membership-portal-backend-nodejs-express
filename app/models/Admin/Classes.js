@@ -21,7 +21,7 @@ const Classes = {
     
     createClass: async (data) => {
         const {
-            title, description, featured_img, trainer_id, is_recurring, recurrence_pattern, status,
+            title, description, featured_img, centre_id, is_recurring, recurrence_pattern, status,
             schedules = [] // [{ day_of_week: 'Monday', start_time: '08:00', end_time: '09:00' }, ...]
         } = data;
     
@@ -37,7 +37,7 @@ const Classes = {
                 title,
                 description,
                 featured_img: featured_img || "",
-                trainer_id: trainer_id || null,
+                centre_id: centre_id || null,
                 is_recurring: is_recurring || false,
                 recurrence_pattern: recurrence_pattern || null,
                 status: status || 0,
@@ -67,7 +67,7 @@ const Classes = {
         if (!id) throw new Error("Invalid class ID");
     
         const {
-            title, description, featured_img, trainer_id,
+            title, description, featured_img, centre_id,
             is_recurring, recurrence_pattern, status,
             schedules = [] // full new schedule array
         } = data;
@@ -80,7 +80,7 @@ const Classes = {
             if (title) updateData.title = title;
             if (description) updateData.description = description;
             if (featured_img) updateData.featured_img = featured_img;
-            if (trainer_id !== undefined) updateData.trainer_id = trainer_id;
+            if (centre_id !== undefined) updateData.centre_id = centre_id;
             if (is_recurring !== undefined) updateData.is_recurring = is_recurring;
             if (recurrence_pattern) updateData.recurrence_pattern = recurrence_pattern;
             if (status !== undefined) updateData.status = status;
@@ -124,12 +124,12 @@ const Classes = {
     },    
 
     listClasses: async (filters = {}) => {
-        const { title, trainer_id, status, page = 1, perPage = 10 } = filters;
+        const { title, centre_id, status, page = 1, perPage = 10 } = filters;
     
         const query = knex("classes").select("*").orderBy("created_at", "desc");
     
         if (title) query.where("title", "like", `%${title}%`);
-        if (trainer_id) query.where("trainer_id", trainer_id);
+        if (centre_id) query.where("centre_id", centre_id);
         if (status !== undefined) query.where("status", status);
     
         const [{ total }] = await knex("classes").clone().count("id as total");
