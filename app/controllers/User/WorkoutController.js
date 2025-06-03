@@ -4,6 +4,7 @@ const {
 	sendErrorResponse,
 } = require("../../../services/helper");
 const Workout = require("../../models/User/Workout");
+const { checkAndUpdateAchievements } = require('../../../services/achievements');
 
 /**
  * @swagger
@@ -328,6 +329,8 @@ exports.logWorkout = async (req, res) => {
 			date: new Date(),
 			calories_burned: calories_burned,
 		});
+
+		await checkAndUpdateAchievements(req.user.user_id, "workout");
 
 		return sendSuccessResponse(res, 200, "Workout logged successfully", {
 			exercise,

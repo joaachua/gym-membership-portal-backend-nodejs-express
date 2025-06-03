@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { verifyToken } = require('../config/auth');
 
+const AchievementController = require('../app/controllers/User/AchievementController');
 const AuthController = require('../app/controllers/AuthController');
 const AdsController = require('../app/controllers/User/AdsController');
 const ClassController = require('../app/controllers/User/ClassesController');
@@ -29,6 +30,8 @@ router.post('/workout-log/view', WorkoutController.viewLog);
 router.post('/workout-log/delete', WorkoutController.deleteLog);
 router.post('/workout-log/list', WorkoutController.logList);
 router.post('/generate-workout', WorkoutController.generateWorkout);
+
+router.post("/achievement/list", AchievementController.userAchievements);
 
 router.post("/ads/list", AdsController.adsList);
 
