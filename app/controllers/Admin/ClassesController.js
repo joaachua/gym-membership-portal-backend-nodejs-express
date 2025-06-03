@@ -393,8 +393,6 @@ exports.viewClass = [
 				return sendErrorResponse(res, 400, "Class not found");
 			}
 
-            singleClass.featured_img = getUrl(singleClass.featured_img, "image");
-
 			return sendSuccessResponse(res, 200, "Class retrieved successfully", singleClass);
 		} catch (error) {
 			return sendErrorResponse(res, 500, "Error retrieving class", error.message);

@@ -393,8 +393,6 @@ exports.viewCentre = [
 				return sendErrorResponse(res, 400, "Centre not found");
 			}
 
-            singleCentre.featured_img = getUrl(singleCentre.featured_img, "image");
-
 			return sendSuccessResponse(res, 200, "Centre retrieved successfully", singleCentre);
 		} catch (error) {
 			return sendErrorResponse(res, 500, "Error retrieving centre", error.message);
