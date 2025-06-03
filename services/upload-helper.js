@@ -1,20 +1,35 @@
+const fs = require('fs');
 const multer = require("multer");
 const path = require("path");
 
 // Storage for images
 const imageStorage = multer.diskStorage({
 	destination: function (req, file, cb) {
-		cb(null, "uploads/images/"); // Save images in 'uploads/images'
+	  	const dir = path.join(__dirname, '../uploads/images');
+  
+		// Create the folder if it doesn't exist
+		if (!fs.existsSync(dir)) {
+			fs.mkdirSync(dir, { recursive: true });
+		}
+  
+	  	cb(null, dir); // Save images here
 	},
 	filename: function (req, file, cb) {
-		cb(null, Date.now() + path.extname(file.originalname)); // Unique filename
+	  	cb(null, Date.now() + path.extname(file.originalname)); // Unique filename
 	},
 });
 
 // Storage for documents
 const documentStorage = multer.diskStorage({
 	destination: function (req, file, cb) {
-		cb(null, "uploads/documents/"); // Save documents in 'uploads/documents'
+		const dir = path.join(__dirname, '../uploads/documents');
+  
+		// Create the folder if it doesn't exist
+		if (!fs.existsSync(dir)) {
+			fs.mkdirSync(dir, { recursive: true });
+		}
+
+		cb(null, dir); ; // Save documents in 'uploads/documents'
 	},
 	filename: function (req, file, cb) {
 		cb(null, Date.now() + path.extname(file.originalname)); // Unique filename
