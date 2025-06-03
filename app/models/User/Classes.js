@@ -52,7 +52,7 @@ const Classes = {
 
             const formatted = classes.map((item) => ({
                 ...item,
-                featured_img: getUrl(item.featured_img),
+                featured_img: getUrl(item.featured_img, "image"),
             }));
 
 			return formatted;
