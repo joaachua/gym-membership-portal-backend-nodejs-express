@@ -1,5 +1,6 @@
 const Ads = require('./Ads');
 const Classes = require('./Classes');
+const Centres = require('./Centres');
 const Content = require('./Content');
 const Membership = require('./Membership');
 const Notification = require('./Notification');
@@ -13,6 +14,7 @@ const User = require('./User');
 const AdminModel = {
     Ads,
     Classes,
+    Centres,
     Content,
     Membership,
     Notification,

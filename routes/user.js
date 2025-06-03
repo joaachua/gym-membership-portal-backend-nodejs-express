@@ -5,6 +5,7 @@ const { verifyToken } = require('../config/auth');
 const AuthController = require('../app/controllers/AuthController');
 const AdsController = require('../app/controllers/User/AdsController');
 const ClassController = require('../app/controllers/User/ClassesController');
+const CentreController = require('../app/controllers/User/CentreController');
 const WorkoutController = require('../app/controllers/User/WorkoutController');
 
 router.post('/register', AuthController.registerUser);
@@ -33,5 +34,8 @@ router.post("/ads/list", AdsController.adsList);
 
 router.post("/class/view", ClassController.viewClass);
 router.post("/class/list", ClassController.classList);
+
+router.post("/centre/view", CentreController.viewCentre);
+router.post("/centre/list", CentreController.centreList);
 
 module.exports = router;

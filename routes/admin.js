@@ -5,6 +5,7 @@ const { authenticateToken, authorize } = require('../config/auth');
 const AuthController = require('../app/controllers/AuthController');
 const AdsController = require('../app/controllers/Admin/AdsController');
 const ClassController = require('../app/controllers/Admin/ClassesController');
+const CentreController = require('../app/controllers/Admin/CentreController');
 
 router.post('/login', AuthController.loginAdmin);
 router.post('/forgot-password', AuthController.forgotPassword);
@@ -24,5 +25,12 @@ router.post("/class/update", authorize(['Class Management-Edit']), ClassControll
 router.post("/class/view", authorize(['Class Management-View']), ClassController.viewClass);
 router.post("/class/delete", authorize(['Class Management-Delete']), ClassController.deleteClass);
 router.post("/class/list", authorize(['Class Management-List']), ClassController.classList);
+
+router.post("/centre/upload-file", authorize(['Centre Management-Create']), CentreController.uploadFile);
+router.post("/centre/store", authorize(['Centre Management-Create']), CentreController.storeCentre);
+router.post("/centre/update", authorize(['Centre Management-Edit']), CentreController.updateCentre);
+router.post("/centre/view", authorize(['Centre Management-View']), CentreController.viewCentre);
+router.post("/centre/delete", authorize(['Centre Management-Delete']), CentreController.deleteCentre);
+router.post("/centre/list", authorize(['Centre Management-List']), CentreController.centreList);
 
 module.exports = router;
