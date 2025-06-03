@@ -1,4 +1,4 @@
-const knex = require("../config/knex");
+const knex = require("../config/db");
 
 const checkAndUpdateAchievements = async (userId, type) => {
 	// Get all achievements for the type
