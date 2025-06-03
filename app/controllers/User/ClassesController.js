@@ -2,7 +2,7 @@ const { body, validationResult } = require("express-validator");
 const {
 	sendSuccessResponse,
 	sendErrorResponse,
-    getUrl
+	getUrl,
 } = require("../../../services/helper");
 const path = require("path");
 
@@ -86,33 +86,68 @@ exports.viewClass = [
 				return sendErrorResponse(res, 400, "Class not found");
 			}
 
-			return sendSuccessResponse(res, 200, "Class retrieved successfully", singleClass);
+			return sendSuccessResponse(
+				res,
+				200,
+				"Class retrieved successfully",
+				singleClass
+			);
 		} catch (error) {
-			return sendErrorResponse(res, 500, "Error retrieving class", error.message);
+			return sendErrorResponse(
+				res,
+				500,
+				"Error retrieving class",
+				error.message
+			);
 		}
 	},
 ];
 
 exports.registerClass = async (req, res) => {
 	const { class_id } = req.body;
-  
+
 	try {
-	  const registrationId = await UserModel.Classes.registerClass({ user_id: req.user.user_id, class_id });
-  
-	  sendSuccessResponse(res, 200, "Class registered successfully", {
-		registration_id: registrationId
-	  });
+		const registrationId = await UserModel.Classes.registerClass({
+			user_id: req.user.user_id,
+			class_id,
+		});
+
+		sendSuccessResponse(res, 200, "Class registered successfully", {
+			registration_id: registrationId,
+		});
 	} catch (err) {
-	  sendErrorResponse(res, 400, err.message, []);
+		sendErrorResponse(res, 400, err.message, []);
 	}
-  };
+};
+
+exports.userClassList = async (req, res) => {
+	try {
+		const user_classes = await UserModel.Classes.listUserClasses(
+			req.user.user_id
+		);
+
+		sendSuccessResponse(
+			res,
+			200,
+			"Class registered successfully",
+			user_classes
+		);
+	} catch (err) {
+		sendErrorResponse(res, 400, err.message, []);
+	}
+};
 
 exports.classList = [
 	async (req, res) => {
 		try {
 			const classes = await UserModel.Classes.listClasses(req.body);
 
-			return sendSuccessResponse(res, 200, "Classes retrieved successfully", classes);
+			return sendSuccessResponse(
+				res,
+				200,
+				"Classes retrieved successfully",
+				classes
+			);
 		} catch (error) {
 			return sendErrorResponse(res, 500, "Failed to retrieve classes", [
 				error.message || "Internal Server Error",
