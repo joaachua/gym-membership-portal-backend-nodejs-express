@@ -34,6 +34,12 @@ exports.seed = async function (knex) {
 		{ permission_group: "Class Management", permission_name: "Edit" },
 		{ permission_group: "Class Management", permission_name: "View" },
 		{ permission_group: "Class Management", permission_name: "Delete" },
+
+		{ permission_group: "Centre Management", permission_name: "Create" },
+		{ permission_group: "Centre Management", permission_name: "List" },
+		{ permission_group: "Centre Management", permission_name: "Edit" },
+		{ permission_group: "Centre Management", permission_name: "View" },
+		{ permission_group: "Centre Management", permission_name: "Delete" },
 	];
 
 	await Promise.all(
@@ -99,6 +105,27 @@ exports.seed = async function (knex) {
 			permission_id: permissionMap["Class Management-Delete"],
 		},
 
+		{
+			role_id: roleMap["Super Admin"],
+			permission_id: permissionMap["Centre Management-Create"],
+		},
+		{
+			role_id: roleMap["Super Admin"],
+			permission_id: permissionMap["Centre Management-List"],
+		},
+		{
+			role_id: roleMap["Super Admin"],
+			permission_id: permissionMap["Centre Management-View"],
+		},
+		{
+			role_id: roleMap["Super Admin"],
+			permission_id: permissionMap["Centre Management-Edit"],
+		},
+		{
+			role_id: roleMap["Super Admin"],
+			permission_id: permissionMap["Centre Management-Delete"],
+		},
+
 		// Admin Role Permissions
 		{
 			role_id: roleMap["Admin"],
@@ -140,6 +167,27 @@ exports.seed = async function (knex) {
 		{
 			role_id: roleMap["Admin"],
 			permission_id: permissionMap["Class Management-Delete"],
+		},
+
+		{
+			role_id: roleMap["Admin"],
+			permission_id: permissionMap["Centre Management-Create"],
+		},
+		{
+			role_id: roleMap["Admin"],
+			permission_id: permissionMap["Centre Management-List"],
+		},
+		{
+			role_id: roleMap["Admin"],
+			permission_id: permissionMap["Centre Management-View"],
+		},
+		{
+			role_id: roleMap["Admin"],
+			permission_id: permissionMap["Centre Management-Edit"],
+		},
+		{
+			role_id: roleMap["Admin"],
+			permission_id: permissionMap["Centre Management-Delete"],
 		},
 	];
 
