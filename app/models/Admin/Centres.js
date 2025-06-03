@@ -47,7 +47,7 @@ const Centres = {
     
             // Insert schedules (if any)
             if (Array.isArray(centre_schedules) && centre_schedules.length) {
-                const scheduleData = schedules.map(s => ({
+                const scheduleData = centre_schedules.map(s => ({
                     centre_id: centreId,
                     day_of_week: s.day_of_week,
                     start_time: s.start_time,
@@ -58,7 +58,7 @@ const Centres = {
 
             // Insert tags (if any)
             if (Array.isArray(centre_tags) && centre_tags.length) {
-                const tagsData = tags.map(s => ({
+                const tagsData = centre_tags.map(s => ({
                     centre_id: centreId,
                     tag_name: s.name
                 }));
@@ -98,7 +98,7 @@ const Centres = {
             await trx("centre_schedules").where({ centre_id: id }).del();
     
             if (Array.isArray(centre_schedules) && centre_schedules.length > 0) {
-                const scheduleData = schedules.map(s => ({
+                const scheduleData = centre_schedules.map(s => ({
                     centre_id: id,
                     day_of_week: s.day_of_week,
                     start_time: s.start_time,
@@ -111,7 +111,7 @@ const Centres = {
             await trx("centre_tags").where({ centre_id: id }).del();
     
             if (Array.isArray(centre_tags) && centre_tags.length > 0) {
-                const tagsData = tags.map(s => ({
+                const tagsData = centre_tags.map(s => ({
                     centre_id: id,
                     tag_name: s.name
                 }));
