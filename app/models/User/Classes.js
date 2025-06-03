@@ -50,7 +50,12 @@ const Classes = {
 				)
 				.where("cr.user_id", user_id);
 
-			return classes;
+            const formatted = classes.map((item) => ({
+                ...item,
+                featured_img: getUrl(item.featured_img),
+            }));
+
+			return formatted;
 		} catch (error) {
 			console.error("Error fetching user classes:", error);
 			throw error;
