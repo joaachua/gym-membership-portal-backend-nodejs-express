@@ -41,6 +41,8 @@ app.get("/user-reset-password", (req, res) => {
 	);
 });
 
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
 app.use("/admin", adminRoutes);
 app.use("/user", userRoutes);
 
